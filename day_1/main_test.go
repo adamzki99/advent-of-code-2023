@@ -6,50 +6,6 @@ import (
     "os"
 )
 
-func TestGetCalibrationValue(t *testing.T){
-
-	result := GetCalibrationValue("1abc2")
-	expected := 12
-
-	// Check if the result matches the expected value
-    if result != expected {
-        t.Errorf("GetCalibrationValue function test 1 failed. Expected: %d, Got: %d", expected, result)
-    }
-
-	result = GetCalibrationValue("pqr3stu8vwx")
-	expected = 38
-
-	// Check if the result matches the expected value
-    if result != expected {
-        t.Errorf("GetCalibrationValue function test 2 failed. Expected: %d, Got: %d", expected, result)
-    }
-
-	result = GetCalibrationValue("a1b2c3d4e5f")
-	expected = 15
-
-	// Check if the result matches the expected value
-    if result != expected {
-        t.Errorf("GetCalibrationValue function test 3 failed. Expected: %d, Got: %d", expected, result)
-    }
-
-	result = GetCalibrationValue("treb7uchet")
-	expected = 77
-
-	// Check if the result matches the expected value
-    if result != expected {
-        t.Errorf("GetCalibrationValue function test 4 failed. Expected: %d, Got: %d", expected, result)
-	}
-
-	result = GetCalibrationValue("5lvlhsjkxssfour")
-	expected = 55
-
-	// Check if the result matches the expected value
-    if result != expected {
-        t.Errorf("GetCalibrationValue function test 4 failed. Expected: %d, Got: %d", expected, result)
-    }
-
-}
-
 func TestAddNumbersInSlice(t *testing.T) {
 
 	testSlice := []int{12, 38, 15, 77}
@@ -90,5 +46,60 @@ func TestReadFileContents(t *testing.T) {
     // Compare the expected and actual content
     if result != string(content) {
         t.Errorf("Expected %q, got %q", string(content), result)
+    }
+}
+
+
+func TestFindFirstNumber(t *testing.T){
+
+	result := FindFirstNumber("foursevennvmgqvxhvg6seven")
+    expected := "4"
+
+    // Check if the result matches the expected value
+    if result != expected {
+        t.Errorf("FindFirstNumber function test failed. Expected: %s, Got: %s", expected, result)
+    }
+
+	result = FindFirstNumber("4sixbrcbxq")
+    expected = "4"
+
+    // Check if the result matches the expected value
+    if result != expected {
+        t.Errorf("FindFirstNumber function test failed. Expected: %s, Got: %s", expected, result)
+    }
+
+	result = FindFirstNumber("kcdflseven69")
+    expected = "7"
+
+    // Check if the result matches the expected value
+    if result != expected {
+        t.Errorf("FindFirstNumber function test failed. Expected: %s, Got: %s", expected, result)
+    }
+}
+
+func TestFindLastNumber(t *testing.T){
+
+	result := FindLastNumber("foursevennvmgqvxhvg6seven")
+    expected := "7"
+
+    // Check if the result matches the expected value
+    if result != expected {
+        t.Errorf("FindLastNumber function test failed. Expected: %s, Got: %s", expected, result)
+    }
+
+	result = FindLastNumber("4sixbrcbxq")
+    expected = "6"
+
+    // Check if the result matches the expected value
+    if result != expected {
+        t.Errorf("FindLastNumber function test failed. Expected: %s, Got: %s", expected, result)
+    }
+
+	result = FindLastNumber("kcdflseven69")
+    expected = "9"
+
+    // Check if the result matches the expected value
+    if result != expected {
+        t.Errorf("FindLastNumber function test failed. Expected: %s, Got: %s", expected, result)
     }
 }

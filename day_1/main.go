@@ -5,51 +5,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"unicode"
 )
-
-func GetCalibrationValue(calibrationValue string) int{
-
-	integer := 0
-	twoDigitNumber := ""
-
-	for i := 0; i < len(calibrationValue); i++{
-
-		char := calibrationValue[i]
-
-		if 47 < char && char < 58 { // We have a number
-			
-			integer = int(char) - 48
-			twoDigitNumber = twoDigitNumber + strconv.Itoa(integer)
-
-			break // Number has been found
-			
-		}
-
-	}
-
-	for i := len(calibrationValue) - 1; 0 <= i; i--{
-
-		char := calibrationValue[i]
-
-		if 47 < char && char < 58 { // We have a number
-			
-			integer = int(char) - 48
-			twoDigitNumber = twoDigitNumber + strconv.Itoa(integer)
-
-			break // Number has been found
-		}
-
-	}
-
-	integer, err := strconv.Atoi(twoDigitNumber)
-
-	if err != nil{
-		fmt.Println(err)
-		return -1
-	}
-
-	return integer
-}
 
 func AddNumbersInSlice(values []int) int{
 	
@@ -71,6 +28,126 @@ func ReadFileContents(filename string) (string, error) {
     return string(content), nil
 }
 
+func FindFirstNumber(calibrationValues string) string{
+
+	numberIndex := -1
+	numberValue := ""
+
+	for i, r := range calibrationValues{
+
+		if unicode.IsNumber(r){
+			numberIndex = i
+			numberValue = string(r)
+			break
+		}
+	}
+
+	if strings.Contains(calibrationValues, "one") && strings.Index(calibrationValues, "one") < numberIndex{
+		numberValue = "1"
+		numberIndex = strings.Index(calibrationValues, "one")
+	}
+
+	if strings.Contains(calibrationValues, "two") && strings.Index(calibrationValues, "two") < numberIndex{
+		numberValue = "2"
+		numberIndex = strings.Index(calibrationValues, "two")
+	}
+
+	if strings.Contains(calibrationValues, "three") && strings.Index(calibrationValues, "three") < numberIndex{
+		numberValue = "3"
+		numberIndex = strings.Index(calibrationValues, "three")
+	}
+
+	if strings.Contains(calibrationValues, "four") && strings.Index(calibrationValues, "four") < numberIndex{
+		numberValue = "4"
+		numberIndex = strings.Index(calibrationValues, "four")
+	}
+
+	if strings.Contains(calibrationValues, "five") && strings.Index(calibrationValues, "five") < numberIndex{
+		numberValue = "5"
+		numberIndex = strings.Index(calibrationValues, "five")
+	}
+
+	if strings.Contains(calibrationValues, "six") && strings.Index(calibrationValues, "six") < numberIndex{
+		numberValue = "6"
+		numberIndex = strings.Index(calibrationValues, "six")
+	}
+
+	if strings.Contains(calibrationValues, "seven") && strings.Index(calibrationValues, "seven") < numberIndex{
+		numberValue = "7"
+		numberIndex = strings.Index(calibrationValues, "seven")
+	}
+	if strings.Contains(calibrationValues, "eight") && strings.Index(calibrationValues, "eight") < numberIndex{
+		numberValue = "8"
+		numberIndex = strings.Index(calibrationValues, "eight")
+	}
+
+	if strings.Contains(calibrationValues, "nine") && strings.Index(calibrationValues, "nine") < numberIndex{
+		numberValue = "9"
+	}
+
+	return numberValue
+}
+
+func FindLastNumber(calibrationValues string) string{
+
+	numberIndex := -1
+	numberValue := ""
+
+	for i, r := range calibrationValues{
+
+		if unicode.IsNumber(r){
+			numberIndex = i
+			numberValue = string(r)
+		}
+	}
+
+	if strings.Contains(calibrationValues, "one") && strings.LastIndex(calibrationValues, "one") > numberIndex{
+		numberValue = "1"
+		numberIndex = strings.LastIndex(calibrationValues, "one")
+	}
+
+	if strings.Contains(calibrationValues, "two") && strings.LastIndex(calibrationValues, "two") > numberIndex{
+		numberValue = "2"
+		numberIndex = strings.LastIndex(calibrationValues, "two")
+	}
+
+	if strings.Contains(calibrationValues, "three") && strings.LastIndex(calibrationValues, "three") > numberIndex{
+		numberValue = "3"
+		numberIndex = strings.LastIndex(calibrationValues, "three")
+	}
+
+	if strings.Contains(calibrationValues, "four") && strings.LastIndex(calibrationValues, "four") > numberIndex{
+		numberValue = "4"
+		numberIndex = strings.LastIndex(calibrationValues, "four")
+	}
+
+	if strings.Contains(calibrationValues, "five") && strings.LastIndex(calibrationValues, "five") > numberIndex{
+		numberValue = "5"
+		numberIndex = strings.LastIndex(calibrationValues, "five")
+	}
+
+	if strings.Contains(calibrationValues, "six") && strings.LastIndex(calibrationValues, "six") > numberIndex{
+		numberValue = "6"
+		numberIndex = strings.LastIndex(calibrationValues, "six")
+	}
+
+	if strings.Contains(calibrationValues, "seven") && strings.LastIndex(calibrationValues, "seven") > numberIndex{
+		numberValue = "7"
+		numberIndex = strings.LastIndex(calibrationValues, "seven")
+	}
+	if strings.Contains(calibrationValues, "eight") && strings.LastIndex(calibrationValues, "eight") > numberIndex{
+		numberValue = "8"
+		numberIndex = strings.LastIndex(calibrationValues, "eight")
+	}
+
+	if strings.Contains(calibrationValues, "nine") && strings.LastIndex(calibrationValues, "nine") > numberIndex{
+		numberValue = "9"
+	}
+
+	return numberValue
+}
+
+
 func main() {
 	
 	numbers := []int{}
@@ -83,8 +160,15 @@ func main() {
 
 	fileLines := strings.Split(fileContent, "\n")
 
-	for _, line  := range fileLines {		
-		numbers = append(numbers, GetCalibrationValue(line))
+	for _, line  := range fileLines {
+
+		firstNumber := FindFirstNumber(line)
+		lastNumber := FindLastNumber(line)
+
+		number, _ := strconv.Atoi(firstNumber + lastNumber)
+
+		numbers = append(numbers, number)
+		
 	}
 
 	result := AddNumbersInSlice(numbers)
