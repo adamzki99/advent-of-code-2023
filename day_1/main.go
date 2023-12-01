@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 	"unicode"
+
+	"github.com/adamzki99/advent-of-code-2023/packages/file"
 )
 
 func AddNumbersInSlice(values []int) int{
@@ -17,15 +18,6 @@ func AddNumbersInSlice(values []int) int{
 	}
 
 	return sum
-}
-
-
-func ReadFileContents(filename string) (string, error) {
-    content, err := os.ReadFile(filename)
-    if err != nil {
-        return "", err
-    }
-    return string(content), nil
 }
 
 func FindFirstNumber(calibrationValues string) string{
@@ -151,7 +143,7 @@ func FindLastNumber(calibrationValues string) string{
 func main() {
 	
 	numbers := []int{}
-	fileContent, err := ReadFileContents("puzzle_input.txt")
+	fileContent, err := file.ReadFileContents("puzzle_input.txt")
 
 	if err != nil{
 		fmt.Println(err)
