@@ -22,3 +22,21 @@ In short, the knowledge sources for this edition will be:
 
 1. [An Introduction to Programming in Go](https://www.golang-book.com/books/intro)
 2. ChatGPT/Bard
+
+## Lessons learned
+
+### Day 1
+
+Today, I only achieved a 54.5% test coverage, but using TDD is fun! It makes one really think about the problem before trying to "throw" a solution at it.
+
+```bash
+
+go test -cover
+
+PASS
+coverage: 54.5% of statements
+ok      day_1/main      0.004s
+
+```
+
+I have also extended the knowledge sources to include the [official documentation](https://go.dev/).
