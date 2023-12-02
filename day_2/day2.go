@@ -48,32 +48,24 @@ func GetCubes(draw, color string) int{
 	return totalNumberOfCubes
 }
 
-func CheckDrawValidity(red, green, blue  int) bool{
-	
-	if red > 12 || green > 13 || blue > 14{
-		return false
-	}
+func RunProgram(fileName string) int {
 
-	return true
-}
+	awnserSum := 0
 
-func main(){
-
-	validGameIDSum := 0
-
-	fileContent, err := file.ReadFileContents("puzzle_input.txt")
+	fileContent, err := file.ReadFileContents(fileName)
 
 	if err != nil{
 		fmt.Println(err)
-		return
+		return -1
 	}
 
 	fileContentLineByLine := strings.Split(fileContent, "\n")
 
-	gameLoop:
 	for _, line := range fileContentLineByLine {
 		
-		gameID := GetGameID(line)
+		largestAmountOfRedCubes := 0
+		largestAmountOfGreenCubes := 0
+		largestAmountOfBlueCubes := 0
 
 		draws := GetDraws(line)
 
@@ -82,14 +74,27 @@ func main(){
 			redCubes := GetCubes(draw, "red")
 			greenCubes := GetCubes(draw, "green")
 			blueCubes := GetCubes(draw, "blue")
+			
 
-		
-			if !CheckDrawValidity(redCubes, greenCubes, blueCubes){
-				continue gameLoop
+			if largestAmountOfRedCubes < redCubes{
+				largestAmountOfRedCubes = redCubes
 			}
+			if largestAmountOfGreenCubes < greenCubes{
+				largestAmountOfGreenCubes = greenCubes
+			}
+			if largestAmountOfBlueCubes < blueCubes{
+				largestAmountOfBlueCubes = blueCubes
+			}
+			
 		}
-		validGameIDSum = validGameIDSum + gameID
+
+		awnserSum = awnserSum + (largestAmountOfRedCubes * largestAmountOfGreenCubes * largestAmountOfBlueCubes)
 	}
 
-	fmt.Println(validGameIDSum)
+	return awnserSum
+}
+
+func main(){
+
+	fmt.Println(RunProgram("puzzle_input.txt"))
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"testing"
+	"os"
 )
 
 func TestGetGameID(t *testing.T){
@@ -51,41 +52,6 @@ func TestGetCubes(t *testing.T){
     }
 }
 
-func TestCheckDrawValidity(t *testing.T){
-
-	result := CheckDrawValidity(12, 13, 14)
-	expected := true
-
-	// Check if the result matches the expected value
-    if result != expected {
-        t.Errorf("CheckDrawValidity function test failed. Expected: %t, Got: %t", expected, result)
-    }
-
-	result = CheckDrawValidity(8, 20, 13)
-	expected = false
-
-	// Check if the result matches the expected value
-    if result != expected {
-        t.Errorf("CheckDrawValidity function test failed. Expected: %t, Got: %t", expected, result)
-    }
-
-	result = CheckDrawValidity(13, 8, 12)
-	expected = false
-
-	// Check if the result matches the expected value
-    if result != expected {
-        t.Errorf("CheckDrawValidity function test failed. Expected: %t, Got: %t", expected, result)
-    }
-
-	result = CheckDrawValidity(1, 8, 42)
-	expected = false
-
-	// Check if the result matches the expected value
-    if result != expected {
-        t.Errorf("CheckDrawValidity function test failed. Expected: %t, Got: %t", expected, result)
-    }
-}
-
 func areSlicesEqual(slice1, slice2 []string) bool {
 	if len(slice1) != len(slice2) {
 		return false
@@ -110,4 +76,33 @@ func TestGetDraws(t *testing.T) {
 	}
 
 	
+}
+
+func TestRunProgram(t *testing.T){
+
+	content := []byte("Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green\nGame 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue\nGame 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red\nGame 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red\nGame 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green")
+    tmpfile, err := os.CreateTemp("", "example")
+    if err != nil {
+        t.Fatal(err)
+    }
+
+	// Remove temporary test file with the end of the test
+	defer os.Remove(tmpfile.Name())
+
+	// Check write contect to file
+    if _, err := tmpfile.Write(content); err != nil {
+        t.Fatal(err)
+    }
+    if err := tmpfile.Close(); err != nil {
+        t.Fatal(err)
+    }
+
+	result := RunProgram(tmpfile.Name())
+	expected := 2286
+
+	// Check if the result matches the expected value
+    if result != expected {
+        t.Errorf("RunProgram function test failed. Expected: %d, Got: %d", expected, result)
+    }
+
 }
