@@ -14,14 +14,19 @@ type Serial struct {
 	didgitPositions []Point
 }
 
+type Symbol struct {
+	identifier rune
+	position   Point
+}
+
 type Point struct {
 	X int
 	Y int
 }
 
-func SymbolsOnLine(puzzleLine string, rowNumber int) []Point {
+func SymbolsOnLine(puzzleLine string, rowNumber int) []Symbol {
 
-	foundSymbolPosisitions := []Point{}
+	foundSymbolPosisitions := []Symbol{}
 
 	listOfSymbold := []string{".", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
 
@@ -33,7 +38,7 @@ func SymbolsOnLine(puzzleLine string, rowNumber int) []Point {
 
 		if !slices.Contains(listOfSymbold, stringConvertedRune) {
 
-			foundSymbolPosisitions = append(foundSymbolPosisitions, Point{X: rowNumber, Y: index})
+			foundSymbolPosisitions = append(foundSymbolPosisitions, Symbol{identifier: r, position: Point{X: rowNumber, Y: index}})
 
 		}
 	}
@@ -151,11 +156,11 @@ func GetSurroundingPoints(p Point) []Point {
 	return returnList
 }
 
-func IsSerial(serialToInspect Serial, symbolLocations []Point) bool {
+func IsSerial(serialToInspect Serial, symbolLocations []Symbol) bool {
 
 	for _, symbolLocation := range symbolLocations {
 
-		surroundingPoints := GetSurroundingPoints(symbolLocation)
+		surroundingPoints := GetSurroundingPoints(symbolLocation.position)
 
 		for _, point := range surroundingPoints {
 
@@ -174,6 +179,52 @@ func IsSerial(serialToInspect Serial, symbolLocations []Point) bool {
 	return false
 }
 
+func MakeGearRatios(gears []Symbol, serials []Serial) []int {
+
+	gearRatio := 1
+	allGearSetsCalulated := []int{}
+	gearSet := make(map[int]struct{})
+
+	//symbolLoop:
+	for _, symbolLocation := range gears {
+
+		surroundingPoints := GetSurroundingPoints(symbolLocation.position)
+
+		//serialLoop:
+		for _, serial := range serials {
+
+			//surroundingPointLoop:
+			for _, point := range surroundingPoints {
+
+				//serialDidgitLoop:
+				for _, didgitPosition := range serial.didgitPositions {
+
+					if point.X == didgitPosition.X && point.Y == didgitPosition.Y {
+						gearSet[serial.number] = struct{}{}
+					}
+
+				}
+
+			}
+
+		}
+
+		if len(gearSet) == 2 {
+			for key := range gearSet{
+				gearRatio = gearRatio * key
+			}
+			allGearSetsCalulated = append(allGearSetsCalulated, gearRatio)
+
+			gearRatio = 1
+		}
+
+		gearSet = make(map[int]struct{})
+	}
+
+	return allGearSetsCalulated
+
+}
+
 func RunProgram(fileName string) int {
 
 	fileContent, err := file.ReadFileContents(fileName)
@@ -185,7 +236,7 @@ func RunProgram(fileName string) int {
 
 	puzzleInput := strings.Split(fileContent, "\n")
 
-	symbolLocation := []Point{}
+	symbolLocation := []Symbol{}
 	serials := []Serial{}
 
 	for rowNumber, row := range puzzleInput {
@@ -202,7 +253,7 @@ func RunProgram(fileName string) int {
 		if IsSerial(serial, symbolLocation) {
 			serialSum = serialSum + serial.number
 
-		} 
+		}
 	}
 
 	return serialSum

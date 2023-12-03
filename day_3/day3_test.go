@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func areSlicesEqual(slice1, slice2 []Point) bool {
+func areSymbolSlicesEqual(slice1, slice2 []Symbol) bool {
 	if len(slice1) != len(slice2) {
 		return false
 	}
@@ -18,6 +18,21 @@ func areSlicesEqual(slice1, slice2 []Point) bool {
 
 	}
 
+	return true
+}
+
+func areIntSlicesEqual(slice1, slice2 []int) bool {
+	if len(slice1) != len(slice2) {
+		return false
+	}
+
+	for i, v := range slice1 {
+
+		if v != slice2[i] {
+			return false
+		}
+
+	}
 	return true
 }
 
@@ -57,45 +72,63 @@ func areSerialObjectEqual(s1, s2 Serial) bool {
 
 }
 
+func arePointSlicesEqual(p1, p2 []Point) bool {
+
+	if len(p1) != len(p2) {
+		return false
+	}
+
+	for i := 0; i < len(p1); i++ {
+
+		if p1[i].X != p2[i].X || p1[i].Y != p2[i].Y {
+			return false
+		}
+
+	}
+
+	return true
+
+}
+
 func TestSymbolOnLine(t *testing.T) {
 
 	result := SymbolsOnLine("467..114..", 0)
-	expected := []Point{}
+	expected := []Symbol{}
 
 	// Check if the result matches the expected value
-	if !areSlicesEqual(result, expected) {
+	if !areSymbolSlicesEqual(result, expected) {
 		t.Errorf("SymbolsOnLine function test failed.")
 	}
 	////0123456789
 	result = SymbolsOnLine("...*......", 1)
-	expected = []Point{{X: 1, Y: 3}}
+	expected = []Symbol{{identifier: '*', position: Point{X: 1, Y: 3}}}
 
 	// Check if the result matches the expected value
-	if !areSlicesEqual(result, expected) {
+	if !areSymbolSlicesEqual(result, expected) {
 		t.Errorf("SymbolsOnLine function test failed.")
 	}
 
 	result = SymbolsOnLine("617*......", 2)
-	expected = []Point{{X: 2, Y: 3}}
+	expected = []Symbol{{identifier: '*', position: Point{X: 2, Y: 3}}}
 
 	// Check if the result matches the expected value
-	if !areSlicesEqual(result, expected) {
+	if !areSymbolSlicesEqual(result, expected) {
 		t.Errorf("SymbolsOnLine function test failed.")
 	}
 
 	result = SymbolsOnLine("...$.*....", 3)
-	expected = []Point{{X: 3, Y: 3}, {X: 3, Y: 5}}
+	expected = []Symbol{{identifier: '$', position: Point{X: 3, Y: 3}}, {identifier: '*', position: Point{X: 3, Y: 5}}}
 
 	// Check if the result matches the expected value
-	if !areSlicesEqual(result, expected) {
+	if !areSymbolSlicesEqual(result, expected) {
 		t.Errorf("SymbolsOnLine function test failed.")
 	}
 
 	result = SymbolsOnLine("...$.*..$.", 4)
-	expected = []Point{{X: 4, Y: 3}, {X: 4, Y: 5}, {X: 4, Y: 8}}
+	expected = []Symbol{{identifier: '$', position: Point{X: 4, Y: 3}}, {identifier: '*', position: Point{X: 4, Y: 5}}, {identifier: '$', position: Point{X: 4, Y: 8}}}
 
 	// Check if the result matches the expected value
-	if !areSlicesEqual(result, expected) {
+	if !areSymbolSlicesEqual(result, expected) {
 		t.Errorf("SymbolsOnLine function test failed.")
 	}
 }
@@ -148,24 +181,6 @@ func TestConvertToNumber(t *testing.T) {
 
 }
 
-func arePointSlicesEqual(p1, p2 []Point) bool {
-
-	if len(p1) != len(p2) {
-		return false
-	}
-
-	for i := 0; i < len(p1); i++ {
-
-		if p1[i].X != p2[i].X || p1[i].Y != p2[i].Y {
-			return false
-		}
-
-	}
-
-	return true
-
-}
-
 func TestGetSurroundingPoints(t *testing.T) {
 
 	result := GetSurroundingPoints(Point{X: 0, Y: 0})
@@ -188,7 +203,13 @@ func TestGetSurroundingPoints(t *testing.T) {
 
 func TestIsSerial(t *testing.T) {
 
-	symbols := []Point{{X: 1, Y: 3}, {X: 2, Y: 3}, {X: 3, Y: 3}, {X: 3, Y: 5}, {X: 4, Y: 3}, {X: 4, Y: 5}, {X: 4, Y: 8}}
+	symbols := []Symbol{{identifier: '*', position: Point{X: 1, Y: 3}},
+		{identifier: '#', position: Point{X: 2, Y: 3}},
+		{identifier: '*', position: Point{X: 3, Y: 3}},
+		{identifier: '+', position: Point{X: 3, Y: 5}},
+		{identifier: '&', position: Point{X: 4, Y: 3}},
+		{identifier: '*', position: Point{X: 4, Y: 5}},
+	}
 
 	serial := Serial{number: 467, didgitPositions: []Point{{X: 0, Y: 0}, {X: 0, Y: 1}, {X: 0, Y: 2}}}
 	result := IsSerial(serial, symbols)
@@ -210,8 +231,207 @@ func TestIsSerial(t *testing.T) {
 
 }
 
-func TestRunProgram(t *testing.T) {
+func TestMakeGearRatios(t *testing.T) {
 
+	symbols := []Symbol{
+		{
+			identifier: '*',
+			position: Point{
+				X: 1,
+				Y: 3,
+			},
+		},
+		{
+			identifier: '*',
+			position: Point{
+				X: 4,
+				Y: 3,
+			},
+		},
+		{
+			identifier: '*', position: Point{
+				X: 8,
+				Y: 5,
+			},
+		},
+	}
+
+	serials := []Serial{
+		{
+			number: 467,
+			didgitPositions: []Point{
+				{
+					X: 0,
+					Y: 0,
+				},
+				{
+					X: 0,
+					Y: 1,
+				},
+				{
+					X: 0,
+					Y: 2,
+				},
+			},
+		},
+		{
+			number: 114,
+			didgitPositions: []Point{
+				{
+					X: 0,
+					Y: 5,
+				},
+				{
+					X: 0,
+					Y: 6,
+				},
+				{
+					X: 0,
+					Y: 7,
+				},
+			},
+		},
+		{
+			number: 35,
+			didgitPositions: []Point{
+				{
+					X: 2,
+					Y: 2,
+				},
+				{
+					X: 2,
+					Y: 3,
+				},
+			},
+		},
+		{
+			number: 633,
+			didgitPositions: []Point{
+				{
+					X: 2,
+					Y: 6,
+				},
+				{
+					X: 0,
+					Y: 7,
+				},
+				{
+					X: 0,
+					Y: 8,
+				},
+			},
+		},
+		{
+			number: 617,
+			didgitPositions: []Point{
+				{
+					X: 4,
+					Y: 0,
+				},
+				{
+					X: 4,
+					Y: 1,
+				},
+				{
+					X: 4,
+					Y: 2,
+				},
+			},
+		},
+		{
+			number: 58,
+			didgitPositions: []Point{
+				{
+					X: 5,
+					Y: 7,
+				},
+				{
+					X: 5,
+					Y: 8,
+				},
+			},
+		},
+		{
+			number: 592,
+			didgitPositions: []Point{
+				{
+					X: 6,
+					Y: 2,
+				},
+				{
+					X: 6,
+					Y: 3,
+				},
+				{
+					X: 6,
+					Y: 4,
+				},
+			},
+		},
+		{
+			number: 755,
+			didgitPositions: []Point{
+				{
+					X: 7,
+					Y: 6,
+				},
+				{
+					X: 7,
+					Y: 7,
+				},
+				{
+					X: 7,
+					Y: 8,
+				},
+			},
+		},
+		{
+			number: 664,
+			didgitPositions: []Point{
+				{
+					X: 9,
+					Y: 1,
+				},
+				{
+					X: 9,
+					Y: 2,
+				},
+				{
+					X: 9,
+					Y: 3,
+				},
+			},
+		},
+		{
+			number: 598,
+			didgitPositions: []Point{
+				{
+					X: 9,
+					Y: 5,
+				},
+				{
+					X: 9,
+					Y: 6,
+				},
+				{
+					X: 9,
+					Y: 7,
+				},
+			},
+		},
+	}
+
+	result := MakeGearRatios(symbols, serials)
+	expected := []int{16345, 16345, 451490, 451490}
+
+	// Check if the result matches the expected value
+	if !areIntSlicesEqual(result, expected) {
+		t.Errorf("MakeGearRatios function test failed.")
+	}
+}
+
+func TestRunProgram(t *testing.T) {
+	///0123456789//0123456789//0123456789//0123456789//0123456789//0123456789//0123456789//0123456789//0123456789//0123456789//
 	content := []byte("467..114..\n...*......\n..35..633.\n......#...\n617*......\n.....+.58.\n..592.....\n......755.\n...$.*....\n.664.598..")
 	tmpfile, err := os.CreateTemp("", "example")
 	if err != nil {
@@ -230,7 +450,7 @@ func TestRunProgram(t *testing.T) {
 	}
 
 	result := RunProgram(tmpfile.Name())
-	expected := 4361
+	expected := 467835
 
 	// Check if the result matches the expected value
 	if result != expected {
