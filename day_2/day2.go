@@ -8,7 +8,7 @@ import (
 	"github.com/adamzki99/advent-of-code-2023/packages/file"
 )
 
-func GetGameID(gameLine string) int{
+func GetGameID(gameLine string) int {
 
 	gameTitleID := strings.Split(gameLine, ":")[0]
 
@@ -20,7 +20,7 @@ func GetGameID(gameLine string) int{
 
 }
 
-func GetDraws(gameLine string) []string{
+func GetDraws(gameLine string) []string {
 
 	allGames := strings.Split(gameLine, ": ")[1]
 
@@ -29,22 +29,22 @@ func GetDraws(gameLine string) []string{
 	return draws
 }
 
-func GetCubes(draw, color string) int{
+func GetCubes(draw, color string) int {
 
 	totalNumberOfCubes := 0
 
 	cubes := strings.Split(draw, ", ")
-		
+
 	for _, cube := range cubes {
-		
-		if strings.Contains(cube, color){
-			nrOfCubesInInstance, _:= strconv.Atoi(strings.Split(cube, " ")[0])
+
+		if strings.Contains(cube, color) {
+			nrOfCubesInInstance, _ := strconv.Atoi(strings.Split(cube, " ")[0])
 
 			totalNumberOfCubes = totalNumberOfCubes + nrOfCubesInInstance
 		}
-		
+
 	}
-	
+
 	return totalNumberOfCubes
 }
 
@@ -54,7 +54,7 @@ func RunProgram(fileName string) int {
 
 	fileContent, err := file.ReadFileContents(fileName)
 
-	if err != nil{
+	if err != nil {
 		fmt.Println(err)
 		return -1
 	}
@@ -62,7 +62,7 @@ func RunProgram(fileName string) int {
 	fileContentLineByLine := strings.Split(fileContent, "\n")
 
 	for _, line := range fileContentLineByLine {
-		
+
 		largestAmountOfRedCubes := 0
 		largestAmountOfGreenCubes := 0
 		largestAmountOfBlueCubes := 0
@@ -74,18 +74,17 @@ func RunProgram(fileName string) int {
 			redCubes := GetCubes(draw, "red")
 			greenCubes := GetCubes(draw, "green")
 			blueCubes := GetCubes(draw, "blue")
-			
 
-			if largestAmountOfRedCubes < redCubes{
+			if largestAmountOfRedCubes < redCubes {
 				largestAmountOfRedCubes = redCubes
 			}
-			if largestAmountOfGreenCubes < greenCubes{
+			if largestAmountOfGreenCubes < greenCubes {
 				largestAmountOfGreenCubes = greenCubes
 			}
-			if largestAmountOfBlueCubes < blueCubes{
+			if largestAmountOfBlueCubes < blueCubes {
 				largestAmountOfBlueCubes = blueCubes
 			}
-			
+
 		}
 
 		awnserSum = awnserSum + (largestAmountOfRedCubes * largestAmountOfGreenCubes * largestAmountOfBlueCubes)
@@ -94,7 +93,7 @@ func RunProgram(fileName string) int {
 	return awnserSum
 }
 
-func main(){
+func main() {
 
 	fmt.Println(RunProgram("puzzle_input.txt"))
 }
