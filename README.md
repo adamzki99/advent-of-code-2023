@@ -25,18 +25,26 @@ In short, the knowledge sources for this edition will be:
 
 ## Lessons learned
 
+### Day 4
+
+```bash
+$ go test -cover
+
+PASS
+coverage: 93.8% of statements
+ok      github.com/adamzki99/advent-of-code-2023/day_4  0.003s
+```
+
 ### Day 3
 
 Good night...
 
 ```bash
-
 $ go test -cover 
 
 PASS
 coverage: 95.7% of statements
 ok      github.com/adamzki99/advent-of-code-2023/day_3  0.003
-
 ```
 
 ### Day 2
@@ -44,13 +52,11 @@ ok      github.com/adamzki99/advent-of-code-2023/day_3  0.003
 Today, I am closing in to the holy 100% test coverage!
 
 ```bash
-
 $ go test -cover
 
 PASS
 coverage: 92.1% of statements
 ok      github.com/adamzki99/advent-of-code-2023/day_2  0.003s
-
 ```
 
 ### Day 1
@@ -58,13 +64,11 @@ ok      github.com/adamzki99/advent-of-code-2023/day_2  0.003s
 Today, I only achieved a 54.5% test coverage, but using TDD is fun! It makes one really think about the problem before trying to "throw" a solution at it.
 
 ```bash
-
 $ go test -cover
 
 PASS
 coverage: 54.5% of statements
 ok      day_1/main      0.004s
-
 ```
 
 I have also extended the knowledge sources to include the [official documentation](https://go.dev/).
