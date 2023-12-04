@@ -422,7 +422,7 @@ func TestMakeGearRatios(t *testing.T) {
 	}
 
 	result := MakeGearRatios(symbols, serials)
-	expected := []int{16345, 16345, 451490, 451490}
+	expected := []int{16345, 451490}
 
 	// Check if the result matches the expected value
 	if !areIntSlicesEqual(result, expected) {
