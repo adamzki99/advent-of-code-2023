@@ -117,7 +117,7 @@ func TestSymbolOnLine(t *testing.T) {
 	}
 
 	result = SymbolsOnLine("...$.*....", 3)
-	expected = []Symbol{{identifier: '$', position: Point{X: 3, Y: 3}}, {identifier: '*', position: Point{X: 3, Y: 5}}}
+	expected = []Symbol{{identifier: '*', position: Point{X: 3, Y: 5}}}
 
 	// Check if the result matches the expected value
 	if !areSymbolSlicesEqual(result, expected) {
@@ -125,7 +125,7 @@ func TestSymbolOnLine(t *testing.T) {
 	}
 
 	result = SymbolsOnLine("...$.*..$.", 4)
-	expected = []Symbol{{identifier: '$', position: Point{X: 4, Y: 3}}, {identifier: '*', position: Point{X: 4, Y: 5}}, {identifier: '$', position: Point{X: 4, Y: 8}}}
+	expected = []Symbol{{identifier: '*', position: Point{X: 4, Y: 5}}}
 
 	// Check if the result matches the expected value
 	if !areSymbolSlicesEqual(result, expected) {
@@ -188,7 +188,7 @@ func TestGetSurroundingPoints(t *testing.T) {
 
 	// Check if the result matches the expected value
 	if !arePointSlicesEqual(result, expected) {
-		t.Errorf("GetSurroundingPoints function test failed.")
+		t.Errorf("GetSurroundingPoints function test 1 failed.")
 	}
 
 	result = GetSurroundingPoints(Point{X: 3, Y: 4})
@@ -196,37 +196,7 @@ func TestGetSurroundingPoints(t *testing.T) {
 
 	// Check if the result matches the expected value
 	if !arePointSlicesEqual(result, expected) {
-		t.Errorf("GetSurroundingPoints function test failed.")
-	}
-
-}
-
-func TestIsSerial(t *testing.T) {
-
-	symbols := []Symbol{{identifier: '*', position: Point{X: 1, Y: 3}},
-		{identifier: '#', position: Point{X: 2, Y: 3}},
-		{identifier: '*', position: Point{X: 3, Y: 3}},
-		{identifier: '+', position: Point{X: 3, Y: 5}},
-		{identifier: '&', position: Point{X: 4, Y: 3}},
-		{identifier: '*', position: Point{X: 4, Y: 5}},
-	}
-
-	serial := Serial{number: 467, didgitPositions: []Point{{X: 0, Y: 0}, {X: 0, Y: 1}, {X: 0, Y: 2}}}
-	result := IsSerial(serial, symbols)
-	expected := true
-
-	// Check if the result matches the expected value
-	if result != expected {
-		t.Errorf("IsSerial function test failed. Expected: %t, Got: %t", expected, result)
-	}
-
-	serial = Serial{number: 114, didgitPositions: []Point{{X: 0, Y: 5}, {X: 0, Y: 6}, {X: 0, Y: 7}}}
-	result = IsSerial(serial, symbols)
-	expected = false
-
-	// Check if the result matches the expected value
-	if result != expected {
-		t.Errorf("IsSerial function test failed. Expected: %t, Got: %t", expected, result)
+		t.Errorf("GetSurroundingPoints function test 2 failed.")
 	}
 
 }
@@ -430,7 +400,7 @@ func TestMakeGearRatios(t *testing.T) {
 	}
 }
 
-func TestRunProgram(t *testing.T) {
+func TestSolvePuzzle(t *testing.T) {
 	///0123456789//0123456789//0123456789//0123456789//0123456789//0123456789//0123456789//0123456789//0123456789//0123456789//
 	content := []byte("467..114..\n...*......\n..35..633.\n......#...\n617*......\n.....+.58.\n..592.....\n......755.\n...$.*....\n.664.598..")
 	tmpfile, err := os.CreateTemp("", "example")
@@ -449,12 +419,12 @@ func TestRunProgram(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	result := RunProgram(tmpfile.Name())
+	result := SolvePuzzle(tmpfile.Name())
 	expected := 467835
 
 	// Check if the result matches the expected value
 	if result != expected {
-		t.Errorf("RunProgram function test failed. Expected: %d, Got: %d", expected, result)
+		t.Errorf("SolvePuzzle function test failed. Expected: %d, Got: %d", expected, result)
 	}
 
 }

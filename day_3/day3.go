@@ -28,7 +28,7 @@ func SymbolsOnLine(puzzleLine string, rowNumber int) []Symbol {
 
 	foundSymbolPosisitions := []Symbol{}
 
-	listOfSymbold := []string{".", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
+	listOfSymbold := []string{"*"}
 
 	// Check if the line has any symbol
 
@@ -36,7 +36,7 @@ func SymbolsOnLine(puzzleLine string, rowNumber int) []Symbol {
 
 		stringConvertedRune := string(r)
 
-		if !slices.Contains(listOfSymbold, stringConvertedRune) {
+		if slices.Contains(listOfSymbold, stringConvertedRune) {
 
 			foundSymbolPosisitions = append(foundSymbolPosisitions, Symbol{identifier: r, position: Point{X: rowNumber, Y: index}})
 
@@ -156,29 +156,6 @@ func GetSurroundingPoints(p Point) []Point {
 	return returnList
 }
 
-func IsSerial(serialToInspect Serial, symbolLocations []Symbol) bool {
-
-	for _, symbolLocation := range symbolLocations {
-
-		surroundingPoints := GetSurroundingPoints(symbolLocation.position)
-
-		for _, point := range surroundingPoints {
-
-			for _, didgitPosition := range serialToInspect.didgitPositions {
-
-				if point.X == didgitPosition.X && point.Y == didgitPosition.Y {
-					return true
-				}
-
-			}
-
-		}
-
-	}
-
-	return false
-}
-
 func MakeGearRatios(gears []Symbol, serials []Serial) []int {
 
 	gearRatio := 1
@@ -210,7 +187,7 @@ func MakeGearRatios(gears []Symbol, serials []Serial) []int {
 		}
 
 		if len(gearSet) == 2 {
-			for key := range gearSet{
+			for key := range gearSet {
 				gearRatio = gearRatio * key
 			}
 			allGearSetsCalulated = append(allGearSetsCalulated, gearRatio)
@@ -225,7 +202,7 @@ func MakeGearRatios(gears []Symbol, serials []Serial) []int {
 
 }
 
-func RunProgram(fileName string) int {
+func SolvePuzzle(fileName string) int {
 
 	fileContent, err := file.ReadFileContents(fileName)
 
@@ -236,29 +213,28 @@ func RunProgram(fileName string) int {
 
 	puzzleInput := strings.Split(fileContent, "\n")
 
-	symbolLocation := []Symbol{}
+	gearLocations := []Symbol{}
 	serials := []Serial{}
 
 	for rowNumber, row := range puzzleInput {
 
-		symbolLocation = append(symbolLocation, SymbolsOnLine(row, rowNumber)...)
+		gearLocations = append(gearLocations, SymbolsOnLine(row, rowNumber)...)
 
 		serials = append(serials, GetNumbersAndPositons(row, rowNumber)...)
 	}
 
-	serialSum := 0
+	ratioSum := 0
 
-	for _, serial := range serials {
+	gearRatios := MakeGearRatios(gearLocations, serials)
 
-		if IsSerial(serial, symbolLocation) {
-			serialSum = serialSum + serial.number
+	for _, gearRatio := range gearRatios {
 
-		}
+		ratioSum = ratioSum + gearRatio
 	}
 
-	return serialSum
+	return ratioSum
 }
 
 func main() {
-	fmt.Println(RunProgram("puzzle_input.txt"))
+	fmt.Println(SolvePuzzle("puzzle_input.txt"))
 }
