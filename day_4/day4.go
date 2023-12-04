@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math"
 	"sort"
 	"strconv"
 	"strings"
@@ -11,9 +10,11 @@ import (
 )
 
 type Card struct {
-	cardID         int
-	cardNumbers    []int
-	winningNumbers []int
+	cardID          int
+	matchingNumbers int
+	instances       int
+	cardNumbers     []int
+	winningNumbers  []int
 }
 
 func ConvertSliceToInts(stringSlice []string) []int {
@@ -88,6 +89,18 @@ slice1Loop:
 
 }
 
+func GenerateCardCopies(cards *[]Card, currentCard Card) {
+
+	for m := 0; m < currentCard.instances; m++ {
+		for i := currentCard.cardID; i < currentCard.cardID+currentCard.matchingNumbers; i++ {
+
+			(*cards)[i].instances = 1 + (*cards)[i].instances
+
+		}
+	}
+
+}
+
 func SolvePuzzle(fileName string) int {
 
 	fileContent, err := file.ReadFileContents(fileName)
@@ -98,18 +111,35 @@ func SolvePuzzle(fileName string) int {
 	}
 
 	puzzleLines := strings.Split(fileContent, "\n")
-	pointSum := 0
+
+	cards := []Card{}
 
 	for index, line := range puzzleLines {
 
 		currentCard := ExtractCards(line, index)
+		currentCard.instances = 1
+		winningMatches := GetIntersection(currentCard.cardNumbers, currentCard.winningNumbers)
+		currentCard.matchingNumbers = len(winningMatches)
 
-		winningNumbers := GetIntersection(currentCard.cardNumbers, currentCard.winningNumbers)
-
-		pointSum = pointSum + int(math.Pow(2, float64(len(winningNumbers)-1)))
+		cards = append(cards, currentCard)
 	}
 
-	return pointSum
+	for _, card := range cards {
+
+		GenerateCardCopies(&cards, card)
+	}
+
+	// Sum together all instances
+
+	instanceSum := 0
+
+	for _, card := range cards {
+
+		instanceSum = instanceSum + card.instances
+
+	}
+
+	return instanceSum
 }
 
 func main() {
