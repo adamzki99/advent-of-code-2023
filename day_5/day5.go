@@ -119,10 +119,6 @@ func CreateListOfSeeds(fileContent *string) []int {
 
 func SolvePuzzle(fileName string) int {
 
-	// Instead of generating the complete maps, we could instead just calculate the next value in the linked list
-	// The next value can maybe be identified before it is calculated.
-	// Like is it between the upper an lower bounds of a calculated value, or will it inherent the same value as it has?
-
 	fileContent, err := file.ReadFileContents(fileName)
 
 	if err != nil {
