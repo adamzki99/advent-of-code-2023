@@ -160,12 +160,6 @@ func SolvePuzzle(fileName string) int {
 		}
 	}
 
-	//for _, seed := range listOfSeeds {
-
-	//seed.Display()
-
-	//}
-
 	// Now we can get the lowest location
 
 	lowestLocation := math.MaxUint32
