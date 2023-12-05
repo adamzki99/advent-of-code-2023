@@ -20,40 +20,31 @@ func areIntSlicesEqual(slice1, slice2 []int) bool {
 	return true
 }
 
-func TestAppend(t *testing.T) {
+func areMappingsEqual(m1, m2 Mapping) bool {
 
-	ll := LinkedList{}
-
-	ll.Append(1)
-	result := ll.head.data
-	expected := 1
-
-	if result != expected {
-		t.Errorf("CreateMap function test failed. Expected %d. Got %d", expected, result)
+	if !areRangesEqual(m1.effectRange, m2.effectRange) {
+		return false
 	}
 
-	ll.Append(2)
-	result = ll.head.next.data
-	expected = 2
-
-	if result != expected {
-		t.Errorf("CreateMap function test failed. Expected %d. Got %d", expected, result)
+	if m1.change != m2.change {
+		return false
 	}
+
+	return true
 
 }
 
-func TestLast(t *testing.T) {
+func areRangesEqual(r1, r2 Range) bool {
 
-	ll := LinkedList{}
-
-	ll.Append(1)
-	ll.Append(2)
-	result := ll.Last().data
-	expected := 2
-
-	if result != expected {
-		t.Errorf("CreateMap function test failed. Expected %d. Got %d", expected, result)
+	if r1.lower != r2.lower {
+		return false
 	}
+	if r1.upper != r2.upper {
+		return false
+	}
+
+	return true
+
 }
 
 func TestStringOfNumbersToSliceOfNumbers(t *testing.T) {
@@ -90,24 +81,31 @@ func TestCreateMapping(t *testing.T) {
 	result := CreateMappings(input)
 	expected := []Mapping{
 		{
-			lowerBound: 98,
-			upperBound: 98 + 2 - 1,
-			change:     50 - 98,
+			effectRange: Range{
+				lower: 98,
+				upper: (98 + 2 - 1),
+			},
+			change: 50 - 98,
 		},
 		{
-			lowerBound: 50,
-			upperBound: 50 + 48 - 1,
-			change:     52 - 50,
+			effectRange: Range{
+				lower: 50,
+				upper: 50 + 48 - 1,
+			},
+			change: 52 - 50,
 		},
 	}
 
-	indexToExamine := 0
-	if result[indexToExamine].upperBound != expected[indexToExamine].upperBound || result[indexToExamine].lowerBound != expected[indexToExamine].lowerBound || result[indexToExamine].change != expected[indexToExamine].change {
+	if len(result) != len(expected) {
 		t.Errorf("CreateMappings function test failed.")
 	}
-	indexToExamine = 1
-	if result[indexToExamine].upperBound != expected[indexToExamine].upperBound || result[indexToExamine].lowerBound != expected[indexToExamine].lowerBound || result[indexToExamine].change != expected[indexToExamine].change {
-		t.Errorf("CreateMappings function test failed.")
+
+	for i := range result {
+
+		if !areMappingsEqual(result[i], expected[i]) {
+			t.Errorf("CreateMappings function test failed.")
+		}
+
 	}
 
 	input = `soil-to-fertilizer map:
@@ -118,38 +116,38 @@ func TestCreateMapping(t *testing.T) {
 	result = CreateMappings(input)
 	expected = []Mapping{
 		{
-			lowerBound: 15,
-			upperBound: 15 + 37 - 1,
-			change:     0 - 15,
+			effectRange: Range{
+				lower: 15,
+				upper: 15 + 37 - 1,
+			},
+			change: 0 - 15,
 		},
 		{
-			lowerBound: 52,
-			upperBound: 52 + 2 - 1,
-			change:     37 - 52,
+			effectRange: Range{
+				lower: 52,
+				upper: 52 + 2 - 1,
+			},
+			change: 37 - 52,
 		},
 		{
-			lowerBound: 0,
-			upperBound: 0 + 15 - 1,
-			change:     39 - 0,
+			effectRange: Range{
+				lower: 0,
+				upper: 0 + 15 - 1,
+			},
+			change: 39 - 0,
 		},
 	}
 
-	indexToExamine = 0
-	if result[indexToExamine].upperBound != expected[indexToExamine].upperBound || result[indexToExamine].lowerBound != expected[indexToExamine].lowerBound || result[indexToExamine].change != expected[indexToExamine].change {
-		t.Errorf("CreateMappings function test failed.")
-	}
-	indexToExamine = 1
-	if result[indexToExamine].upperBound != expected[indexToExamine].upperBound || result[indexToExamine].lowerBound != expected[indexToExamine].lowerBound || result[indexToExamine].change != expected[indexToExamine].change {
-		t.Errorf("CreateMappings function test failed.")
-	}
-	indexToExamine = 2
-	if result[indexToExamine].upperBound != expected[indexToExamine].upperBound || result[indexToExamine].lowerBound != expected[indexToExamine].lowerBound || result[indexToExamine].change != expected[indexToExamine].change {
-		t.Errorf("CreateMappings function test failed.")
-	}
+	for i := range result {
 
+		if !areMappingsEqual(result[i], expected[i]) {
+			t.Errorf("CreateMappings function test failed.")
+		}
+
+	}
 }
 
-func TestCreateListOfSeeds(t *testing.T) {
+func TestCreateSliceOfSeedRanges(t *testing.T) {
 
 	content := `seeds: 79 14 55 13
 
@@ -185,11 +183,25 @@ humidity-to-location map:
 60 56 37
 56 93 4`
 
-	result := CreateListOfSeeds(&content)
-	expected := []int{79, 14, 55, 13}
+	result := CreateSliceOfSeedRanges(&content)
+	expected := []Range{
+		{
+			lower: 79,
+			upper: 92,
+		},
+		{
+			lower: 55,
+			upper: 67,
+		},
+	}
 
-	if !areIntSlicesEqual(result, expected) {
-		t.Error("CreateListOfSeeds function test failed.")
+	index := 0
+	if result[index].lower != expected[index].lower || result[index].upper != expected[index].upper {
+		t.Error("CreateSliceOfSeedRanges function test failed.")
+	}
+	index = 1
+	if result[index].lower != expected[index].lower || result[index].upper != expected[index].upper {
+		t.Error("CreateSliceOfSeedRanges function test failed.")
 	}
 
 }
@@ -248,7 +260,7 @@ humidity-to-location map:
 	}
 
 	result := SolvePuzzle(tmpfile.Name())
-	expected := 35
+	expected := 46
 
 	// Check if the result matches the expected value
 	if result != expected {
