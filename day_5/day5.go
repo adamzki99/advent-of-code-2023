@@ -214,6 +214,44 @@ func SolvePuzzle(fileName string) int {
 
 	return lowestValue
 
+<<<<<<< HEAD
+=======
+			for _, mapping := range mappings {
+
+				if mapping.lowerBound <= seed.Last().data && seed.Last().data <= mapping.upperBound {
+					seed.Append(seed.Last().data + mapping.change)
+					continue seedLoop
+				}
+
+			}
+
+			seed.Append(seed.Last().data)
+
+		}
+	}
+
+	//for _, seed := range listOfSeeds {
+
+	//seed.Display()
+
+	//}
+
+	// Now we can get the lowest location
+
+	lowestLocation := math.MaxUint32
+
+	for _, seed := range listOfSeeds {
+
+		//fmt.Println(seed.Last().data)
+
+		if seed.Last().data < lowestLocation {
+			lowestLocation = seed.Last().data
+		}
+
+	}
+
+	return lowestLocation
+>>>>>>> parent of 63b32fd (Part 1 complete)
 }
 
 func main() {
