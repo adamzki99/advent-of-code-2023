@@ -5,6 +5,7 @@ import (
 	"math"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/adamzki99/advent-of-code-2023/packages/file"
 )
@@ -63,6 +64,11 @@ type Mapping struct {
 	change     int
 }
 
+type Range struct {
+	lower int
+	upper int
+}
+
 func StringOfNumbersToSliceOfNumbers(stringOfNumbers, seperator string) []int {
 
 	seperateValues := strings.Split(stringOfNumbers, seperator)
@@ -109,7 +115,7 @@ func CreateMappings(mapInput string) []Mapping {
 	return mappings
 }
 
-func CreateListOfSeeds(fileContent *string) []int {
+func CreateSliceOfSeeds(fileContent *string) []int {
 
 	fileLines := strings.Split(*fileContent, "\n")
 
@@ -117,7 +123,62 @@ func CreateListOfSeeds(fileContent *string) []int {
 
 }
 
+func CreateSliceOfSeedRanges(fileContent *string) []Range {
+
+	returnSlice := []Range{}
+
+	numbers := CreateSliceOfSeeds(fileContent)
+
+	for i := 0; i < len(numbers); i = i + 2 {
+		returnSlice = append(returnSlice, Range{lower: numbers[i], upper: numbers[i] + numbers[i+1]})
+	}
+
+	return returnSlice
+}
+
+func GetLowestValue(seedRange Range, mapStrings []string, wg *sync.WaitGroup, resultChan chan int) {
+
+	defer wg.Done()
+
+	lowestValue := math.MaxInt64
+
+	for currentSeed := seedRange.lower; currentSeed < seedRange.upper; currentSeed++ {
+
+		if currentSeed == 82 {
+			fmt.Println(currentSeed)
+		}
+
+		seedCopy := currentSeed
+
+		for _, mapString := range mapStrings {
+
+			mappings := CreateMappings(mapString)
+
+			for _, mapping := range mappings {
+
+				if mapping.lowerBound <= seedCopy && seedCopy <= mapping.upperBound {
+					seedCopy = seedCopy + mapping.change
+				}
+			}
+
+		}
+
+		if currentSeed == 82 {
+			fmt.Println(seedCopy)
+		}
+
+		if seedCopy < lowestValue {
+			lowestValue = seedCopy
+		}
+	}
+
+	resultChan <- lowestValue
+
+}
+
 func SolvePuzzle(fileName string) int {
+
+	var wg sync.WaitGroup
 
 	fileContent, err := file.ReadFileContents(fileName)
 
@@ -126,55 +187,38 @@ func SolvePuzzle(fileName string) int {
 		return -1
 	}
 
-	listOfSeeds := []LinkedList{}
-
-	for _, seed := range CreateListOfSeeds(&fileContent) {
-
-		newLinkedList := LinkedList{}
-		newLinkedList.Append(seed)
-
-		listOfSeeds = append(listOfSeeds, newLinkedList)
-	}
-
 	mapStrings := strings.Split(fileContent, "\n\n")
 	mapStrings = mapStrings[1:]
 
-	for _, mapString := range mapStrings {
+	seedRanges := CreateSliceOfSeedRanges(&fileContent)
 
-		mappings := CreateMappings(mapString)
+	numberOfWorkers := len(seedRanges)
+	resultChan := make(chan int, numberOfWorkers)
 
-	seedLoop:
-		for _, seed := range listOfSeeds {
+	for _, seedRange := range seedRanges {
 
-			for _, mapping := range mappings {
-
-				if mapping.lowerBound <= seed.Last().data && seed.Last().data <= mapping.upperBound {
-					seed.Append(seed.Last().data + mapping.change)
-					continue seedLoop
-				}
-
-			}
-
-			seed.Append(seed.Last().data)
-
-		}
-	}
-
-	// Now we can get the lowest location
-
-	lowestLocation := math.MaxUint32
-
-	for _, seed := range listOfSeeds {
-
-		//fmt.Println(seed.Last().data)
-
-		if seed.Last().data < lowestLocation {
-			lowestLocation = seed.Last().data
-		}
+		wg.Add(1)
+		go GetLowestValue(seedRange, mapStrings, &wg, resultChan)
 
 	}
 
-	return lowestLocation
+	// Close the result channel once all workers are done
+	go func() {
+		wg.Wait()
+		close(resultChan)
+	}()
+
+	lowestValue := math.MaxInt64
+
+	// Get results from the channel
+	for result := range resultChan {
+
+		if result < lowestValue {
+			lowestValue = result
+		}
+	}
+
+	return lowestValue
 }
 
 func main() {
