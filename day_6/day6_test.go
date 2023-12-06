@@ -5,36 +5,6 @@ import (
 	"testing"
 )
 
-func areRaceSlicesEqual(rs1, rs2 []Race) bool {
-
-	if len(rs1) != len(rs2) {
-		return false
-	}
-
-	for i := range rs1 {
-		if rs1[i] != rs2[i] {
-			return false
-		}
-	}
-
-	return true
-}
-
-func areIntSlicesEqual(slice1, slice2 []int) bool {
-	if len(slice1) != len(slice2) {
-		return false
-	}
-
-	for i := range slice1 {
-
-		if slice1[i] != slice2[i] {
-			return false
-		}
-
-	}
-	return true
-}
-
 func TestGetDistanceTraveled(t *testing.T) {
 
 	result := GetDistanceTraveled(0, 7)
@@ -88,7 +58,7 @@ func TestStringOfNumbersToSingle(t *testing.T) {
 
 }
 
-func TestExtractRaces(t *testing.T) {
+func TestExtractRace(t *testing.T) {
 
 	fileLines := []string{
 		"Time:      7  15   30",
