@@ -10,54 +10,6 @@ import (
 	"github.com/adamzki99/advent-of-code-2023/packages/file"
 )
 
-type Node struct {
-	data int
-	next *Node
-}
-
-type LinkedList struct {
-	head *Node
-}
-
-func (ll *LinkedList) Append(data int) {
-	newNode := &Node{data: data, next: nil}
-
-	if ll.head == nil {
-		ll.head = newNode
-		return
-	}
-
-	current := ll.head
-	for current.next != nil {
-		current = current.next
-	}
-	current.next = newNode
-}
-
-func (ll *LinkedList) Display() {
-	current := ll.head
-	for current != nil {
-		fmt.Printf("%d -> ", current.data)
-		current = current.next
-	}
-	fmt.Println("nil")
-}
-
-func (ll *LinkedList) Last() *Node {
-
-	currentNode := ll.head
-
-	for {
-
-		if currentNode.next == nil {
-			return currentNode
-		}
-
-		currentNode = currentNode.next
-	}
-
-}
-
 type Mapping struct {
 	lowerBound int
 	upperBound int
@@ -105,7 +57,7 @@ func CreateMappings(mapInput string) []Mapping {
 
 		newMapping := Mapping{
 			lowerBound: extractedValuesFromLine[1],
-			upperBound: extractedValuesFromLine[1] + extractedValuesFromLine[2] - 1,
+			upperBound: (extractedValuesFromLine[1] + extractedValuesFromLine[2] - 1),
 			change:     extractedValuesFromLine[0] - extractedValuesFromLine[1],
 		}
 
@@ -130,7 +82,7 @@ func CreateSliceOfSeedRanges(fileContent *string) []Range {
 	numbers := CreateSliceOfSeeds(fileContent)
 
 	for i := 0; i < len(numbers); i = i + 2 {
-		returnSlice = append(returnSlice, Range{lower: numbers[i], upper: numbers[i] + numbers[i+1]})
+		returnSlice = append(returnSlice, Range{lower: numbers[i], upper: numbers[i] + numbers[i+1] - 1})
 	}
 
 	return returnSlice
@@ -143,10 +95,6 @@ func GetLowestValue(seedRange Range, mapStrings []string, wg *sync.WaitGroup, re
 	lowestValue := math.MaxInt64
 
 	for currentSeed := seedRange.lower; currentSeed < seedRange.upper; currentSeed++ {
-
-		if currentSeed == 82 {
-			fmt.Println(currentSeed)
-		}
 
 		seedCopy := currentSeed
 
@@ -162,11 +110,6 @@ func GetLowestValue(seedRange Range, mapStrings []string, wg *sync.WaitGroup, re
 			}
 
 		}
-
-		if currentSeed == 82 {
-			fmt.Println(seedCopy)
-		}
-
 		if seedCopy < lowestValue {
 			lowestValue = seedCopy
 		}
