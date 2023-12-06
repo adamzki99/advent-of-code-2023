@@ -24,42 +24,36 @@ func GetDistanceTraveled(holdTime, raceTime int) int {
 	return 0
 }
 
-func StringOfNumbersToSliceOfNumbers(stringOfNumbers, seperator string) []int {
+func StringOfNumbersToSingle(stringOfNumbers, seperator string) int {
 
 	seperateValues := strings.Split(stringOfNumbers, seperator)[1:]
 
-	returnSlice := []int{}
+	concatinatedNumbers := ""
 
 	for _, v := range seperateValues {
 
 		if v != "" {
-			convertedIntegers, err := strconv.Atoi(v)
-
-			if err != nil {
-				return []int{}
-			}
-
-			returnSlice = append(returnSlice, convertedIntegers)
+			concatinatedNumbers = concatinatedNumbers + v
 		}
 
 	}
 
-	return returnSlice
-}
+	number, err := strconv.Atoi(concatinatedNumbers)
 
-func ExtractRaces(fileLines *[]string) []Race {
-
-	returnSlice := []Race{}
-
-	times := StringOfNumbersToSliceOfNumbers((*fileLines)[0], " ")
-	distances := StringOfNumbersToSliceOfNumbers((*fileLines)[1], " ")
-
-	for i := range times {
-		returnSlice = append(returnSlice, Race{time: times[i], distance: distances[i]})
-
+	if err != nil {
+		fmt.Println(err)
+		return -1
 	}
 
-	return returnSlice
+	return number
+}
+
+func ExtractRace(fileLines *[]string) Race {
+
+	time := StringOfNumbersToSingle((*fileLines)[0], " ")
+	distance := StringOfNumbersToSingle((*fileLines)[1], " ")
+
+	return Race{time: time, distance: distance}
 }
 
 func SolvePuzzle(fileName string) int {
@@ -71,29 +65,23 @@ func SolvePuzzle(fileName string) int {
 		return -1
 	}
 
-	puzzleAwnser := 1
 	waysOfBeatingTheRace := 0
 
 	fileLines := strings.Split(fileContent, "\n")
 
-	for _, race := range ExtractRaces(&fileLines) {
+	race := ExtractRace(&fileLines)
 
-		for holdTime := 0; holdTime < race.time; holdTime++ {
+	for holdTime := 0; holdTime < race.time; holdTime++ {
 
-			distanceTraveled := GetDistanceTraveled(holdTime, race.time)
+		distanceTraveled := GetDistanceTraveled(holdTime, race.time)
 
-			if distanceTraveled > race.distance {
-				waysOfBeatingTheRace++
-			}
-
+		if distanceTraveled > race.distance {
+			waysOfBeatingTheRace++
 		}
-
-		puzzleAwnser = puzzleAwnser * waysOfBeatingTheRace
-		waysOfBeatingTheRace = 0
 
 	}
 
-	return puzzleAwnser
+	return waysOfBeatingTheRace
 
 }
 

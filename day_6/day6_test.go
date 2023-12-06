@@ -63,27 +63,27 @@ func TestGetDistanceTraveled(t *testing.T) {
 
 }
 
-func TestStringOfNumbersToSliceOfNumbers(t *testing.T) {
+func TestStringOfNumbersToSingle(t *testing.T) {
 
-	result := StringOfNumbersToSliceOfNumbers("88 18 7", " ")
-	expected := []int{88, 18, 7}
+	result := StringOfNumbersToSingle("Test:   88 18 7", " ")
+	expected := 88187
 
-	if !areIntSlicesEqual(result, expected) {
-		t.Error("StringOfNumbersToSliceOfNumbers function test 1 failed.")
+	if result != expected {
+		t.Errorf("StringOfNumbersToSingle function test failed. Expected: %d, Got: %d", expected, result)
 	}
 
-	result = StringOfNumbersToSliceOfNumbers("0 69 1", " ")
-	expected = []int{0, 69, 1}
+	result = StringOfNumbersToSingle("Test:   0 69 1", " ")
+	expected = 691
 
-	if !areIntSlicesEqual(result, expected) {
-		t.Error("StringOfNumbersToSliceOfNumbers function test 2 failed.")
+	if result != expected {
+		t.Errorf("StringOfNumbersToSingle function test failed. Expected: %d, Got: %d", expected, result)
 	}
 
-	result = StringOfNumbersToSliceOfNumbers("52 50 48", " ")
-	expected = []int{52, 50, 48}
+	result = StringOfNumbersToSingle("Test:   52 50 48", " ")
+	expected = 525048
 
-	if !areIntSlicesEqual(result, expected) {
-		t.Error("StringOfNumbersToSliceOfNumbers function test 3 failed.")
+	if result != expected {
+		t.Errorf("StringOfNumbersToSingle function test failed. Expected: %d, Got: %d", expected, result)
 	}
 
 }
@@ -95,25 +95,14 @@ func TestExtractRaces(t *testing.T) {
 		"Distance:  9  40  200",
 	}
 
-	result := ExtractRaces(&fileLines)
-	expected := []Race{
-		{
-			time:     7,
-			distance: 9,
-		},
-		{
-			time:     15,
-			distance: 40,
-		},
-		{
-			time:     30,
-			distance: 200,
-		},
+	result := ExtractRace(&fileLines)
+	expected := Race{
+		time:     71530,
+		distance: 940200,
 	}
 
-	if !areRaceSlicesEqual(result, expected) {
+	if result != expected {
 		t.Errorf("ExtractRaces function test failed.")
-
 	}
 
 }
@@ -141,7 +130,7 @@ Distance:  9  40  200`,
 	}
 
 	result := SolvePuzzle(tmpfile.Name())
-	expected := 288
+	expected := 71503
 
 	// Check if the result matches the expected value
 	if result != expected {
