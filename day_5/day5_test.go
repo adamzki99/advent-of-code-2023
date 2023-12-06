@@ -185,11 +185,11 @@ humidity-to-location map:
 60 56 37
 56 93 4`
 
-	result := CreateListOfSeeds(&content)
+	result := CreateSliceOfSeeds(&content)
 	expected := []int{79, 14, 55, 13}
 
 	if !areIntSlicesEqual(result, expected) {
-		t.Error("CreateListOfSeeds function test failed.")
+		t.Error("CreateSliceOfSeeds function test failed.")
 	}
 
 }
@@ -248,7 +248,7 @@ humidity-to-location map:
 	}
 
 	result := SolvePuzzle(tmpfile.Name())
-	expected := 35
+	expected := 46
 
 	// Check if the result matches the expected value
 	if result != expected {
