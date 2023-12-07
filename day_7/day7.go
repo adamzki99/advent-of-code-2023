@@ -26,8 +26,6 @@ func LabelConversion(label string) int {
 		return 37
 	case "Q":
 		return 31
-	case "J":
-		return 29
 	case "T":
 		return 23
 	case "9":
@@ -46,6 +44,8 @@ func LabelConversion(label string) int {
 		return 3
 	case "2":
 		return 2
+	case "J":
+		return 0
 	default:
 		return -1
 	}
@@ -72,6 +72,15 @@ func ExtractOccurrences(hand []string) []int {
 	return occurrences
 }
 
+func contains(slice []string, target string) bool {
+	for _, value := range slice {
+		if value == target {
+			return true
+		}
+	}
+	return false
+}
+
 func HandTypeExtraction(hand string) int {
 
 	occurrences := ExtractOccurrences(strings.Split(hand, ""))
@@ -91,6 +100,58 @@ func HandTypeExtraction(hand string) int {
 	}
 
 	return 43
+}
+
+func ConstructString(s []string) string {
+
+	returnString := ""
+
+	for _, v := range s {
+		returnString = returnString + v
+	}
+
+	return returnString
+}
+
+// Find all possible cobinations of placing a joker, and return the best type
+func HandTypeExtractionJoker(hand string) int {
+
+	if strings.Count(hand, "J") == 0 {
+		return HandTypeExtraction(hand)
+	}
+
+	bestHand := 0
+
+	symbols := []string{"2", "3", "4", "5", "6", "7", "8", "9", "T", "Q", "K", "A"}
+
+	handSymbols := strings.Split(hand, "")
+	jokerIndexes := []int{}
+
+	for i, hS := range handSymbols {
+		if hS == "J" {
+			jokerIndexes = append(jokerIndexes, i)
+		}
+	}
+
+	for _, jokerIndex := range jokerIndexes {
+
+		for _, symbol := range symbols {
+
+			handSymbols[jokerIndex] = symbol
+
+			stringToSend := ConstructString(handSymbols)
+			currentHand := HandTypeExtractionJoker(stringToSend)
+
+			if bestHand < currentHand {
+				bestHand = currentHand
+			}
+
+		}
+
+		handSymbols[jokerIndex] = "J"
+	}
+
+	return bestHand
 }
 
 // Usage is similar to "Is rank of h1 higher than rank of h2?"
@@ -152,7 +213,11 @@ func SolvePuzzle(fileName string) int {
 			return -1
 		}
 
-		currentHand.hType = HandTypeExtraction(puzzleInput[0])
+		if strings.Count(puzzleInput[0], "J") == 0 {
+			currentHand.hType = HandTypeExtraction(puzzleInput[0])
+		} else {
+			currentHand.hType = HandTypeExtractionJoker(puzzleInput[0])
+		}
 		currentHand.hString = puzzleInput[0]
 		hands = append(hands, currentHand)
 	}

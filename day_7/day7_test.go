@@ -96,6 +96,28 @@ func TestHandTypeExtraction(t *testing.T) {
 
 }
 
+func TestHandTypeExtractionJoker(t *testing.T) {
+
+	result := HandTypeExtractionJoker("T55J5")
+	expected := 67
+	if result != expected {
+		t.Errorf("HandTypeExtractionJoker function test failed. Expected: %d, Got: %d", expected, result)
+	}
+
+	result = HandTypeExtractionJoker("KTJJT")
+	expected = 67
+	if result != expected {
+		t.Errorf("HandTypeExtractionJoker function test failed. Expected: %d, Got: %d", expected, result)
+	}
+
+	result = HandTypeExtractionJoker("QQQJA")
+	expected = 67
+	if result != expected {
+		t.Errorf("HandTypeExtractionJoker function test failed. Expected: %d, Got: %d", expected, result)
+	}
+
+}
+
 func TestCompareHands(t *testing.T) {
 
 	result := CompareHands(
@@ -186,7 +208,7 @@ QQQJA 483`,
 	}
 
 	result := SolvePuzzle(tmpfile.Name())
-	expected := 6440
+	expected := 5905
 
 	// Check if the result matches the expected value
 	if result != expected {
