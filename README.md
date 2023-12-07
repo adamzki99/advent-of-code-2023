@@ -25,6 +25,16 @@ In short, the knowledge sources for this edition will be:
 
 ## Lessons learned
 
+## Day 7
+
+```bash
+$ go test -cover
+
+PASS
+coverage: 93.2% of statements
+ok      github.com/adamzki99/advent-of-code-2023/day_4  0.003s
+```
+
 ## Day 6
 
 ```bash
