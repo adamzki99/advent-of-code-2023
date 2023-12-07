@@ -72,14 +72,6 @@ func ExtractOccurrences(hand []string) []int {
 	return occurrences
 }
 
-func contains(slice []string, target string) bool {
-	for _, value := range slice {
-		if value == target {
-			return true
-		}
-	}
-	return false
-}
 
 func HandTypeExtraction(hand string) int {
 

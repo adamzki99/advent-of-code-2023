@@ -28,12 +28,10 @@ func TestLabelConversion(t *testing.T) {
 
 func TestExtractOccurrences(t *testing.T) {
 
-	result := ExtractOccurrences([]string{"A", "A", "3", "3"})
-	expected := make(map[int]int)
-	expected[13] = 2
-	expected[2] = 2
+	result := ExtractOccurrences([]string{"A", "A", "3"})
+	expected := []int{2,1}
 
-	if result[13] != expected[13] || result[2] != expected[2] {
+	if result[0] != expected[0] || result[1] != expected[1] {
 		t.Errorf("TestCharFactory function test failed.")
 	}
 
@@ -92,6 +90,17 @@ func TestHandTypeExtraction(t *testing.T) {
 	expected = 43
 	if result != expected {
 		t.Errorf("HandTypeExtraction function test failed. Expected: %d, Got: %d", expected, result)
+	}
+
+}
+
+func TestConstructString(t *testing.T) {
+
+	result := ConstructString([]string{"A", "B", "B", "A"})
+	expected := "ABBA"
+
+	if result != expected {
+		t.Errorf("ConstructString function test failed. Expected: %s, Got: %s", expected, result)
 	}
 
 }
