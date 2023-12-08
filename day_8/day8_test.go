@@ -90,17 +90,27 @@ func TestSplitNodeLine(t *testing.T) {
 
 }
 
+func TestLowesCommonMultipler(t *testing.T) {
+	result := LowesCommonMultipler([]int{2, 3, 4})
+	expected := 12
+
+	if result != expected {
+		t.Errorf("SolvePuzzle function test failed. Expected: %d, Got: %d", expected, result)
+	}
+}
+
 func TestSolvePuzzle(t *testing.T) {
 
-	content := []byte(`RL
+	content := []byte(`LR
 
-AAA = (BBB, CCC)
-BBB = (DDD, EEE)
-CCC = (ZZZ, GGG)
-DDD = (DDD, DDD)
-EEE = (EEE, EEE)
-GGG = (GGG, GGG)
-ZZZ = (ZZZ, ZZZ)`)
+11A = (11B, XXX)
+11B = (XXX, 11Z)
+11Z = (11B, XXX)
+22A = (22B, XXX)
+22B = (22C, 22C)
+22C = (22Z, 22Z)
+22Z = (22B, 22B)
+XXX = (XXX, XXX)`)
 
 	tmpfile, err := os.CreateTemp("", "example")
 	if err != nil {
@@ -119,7 +129,7 @@ ZZZ = (ZZZ, ZZZ)`)
 	}
 
 	result := SolvePuzzle(tmpfile.Name())
-	expected := 2
+	expected := 6
 
 	// Check if the result matches the expected value
 	if result != expected {

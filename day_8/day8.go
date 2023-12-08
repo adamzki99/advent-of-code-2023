@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"strings"
+	"sync"
 
 	"github.com/adamzki99/advent-of-code-2023/packages/file"
 )
@@ -61,7 +63,59 @@ func SplitNodeLine(puzzleLine string) (string, string, string) {
 	return return1, return2, return3
 }
 
+func Walk(startPlace string, walkPattern string, places map[string]Paths, wg *sync.WaitGroup, resultChan chan int) {
+
+	defer wg.Done()
+	stepFactory := CharFactory(walkPattern)
+	steps := 0
+
+	currentPlace := startPlace
+
+	for {
+
+		step := stepFactory()
+		steps++
+
+		if step == "L" {
+			currentPlace = places[currentPlace].left
+		} else {
+			currentPlace = places[currentPlace].right
+		}
+
+		if currentPlace[2] == byte('Z') {
+			break
+		}
+
+	}
+
+	resultChan <- steps
+
+}
+
+func gcd(a, b int) int {
+	for b != 0 {
+		a, b = b, a%b
+	}
+	return a
+}
+
+func lcm(a, b int) int {
+	return int(math.Abs(float64(a*b)) / float64(gcd(a, b)))
+}
+
+func LowesCommonMultipler(v []int) int {
+
+	result := 1
+	for _, num := range v {
+		result = lcm(result, num)
+	}
+	return result
+
+}
+
 func SolvePuzzle(fileName string) int {
+
+	var wg sync.WaitGroup
 
 	fileContent, err := file.ReadFileContents(fileName)
 
@@ -76,38 +130,40 @@ func SolvePuzzle(fileName string) int {
 
 	nodeLines := puzzleLines[2:]
 
+	startingPlaces := []string{}
+
 	for _, line := range nodeLines {
 
 		p1, p2, p3 := SplitNodeLine(line)
+
+		if p1[2] == byte('A') {
+			startingPlaces = append(startingPlaces, p1)
+		}
 
 		places[p1] = Paths{left: p2, right: p3}
 
 	}
 
-	stepFactory := CharFactory(puzzleLines[0])
-	steps := 0
+	resultChan := make(chan int, len(startingPlaces))
+	for _, sp := range startingPlaces {
 
-	currentPlace := "AAA"
-
-	for {
-
-		step := stepFactory()
-		steps++
-
-		if step == "L" {
-			currentPlace = places[currentPlace].left
-		} else {
-			currentPlace = places[currentPlace].right
-		}
-
-		if currentPlace == "ZZZ" {
-			fmt.Println(places[currentPlace])
-			break
-		}
+		wg.Add(1)
+		go Walk(sp, puzzleLines[0], places, &wg, resultChan)
 
 	}
 
-	return steps
+	go func() {
+		wg.Wait()
+		close(resultChan)
+	}()
+
+	results := []int{}
+	for r := range resultChan {
+
+		results = append(results, r)
+	}
+
+	return LowesCommonMultipler(results)
 
 }
 
