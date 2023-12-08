@@ -5,51 +5,6 @@ import (
 	"testing"
 )
 
-func TestAppendLeft(t *testing.T) {
-
-	input := Place{current: "AAA"}
-	input.AppendLeft("BBB", &input)
-	expected := "BBB"
-
-	if input.left.current != expected {
-		t.Errorf("AppendLeft function test failed. Expected: %s, Got: %s", expected, input.left.current)
-	}
-
-}
-
-func TestAAppendRight(t *testing.T) {
-
-	input := Place{current: "AAA"}
-	input.AppendRight("BBB", &input)
-	expected := "BBB"
-
-	if input.right.current != expected {
-		t.Errorf("AppendRight function test failed. Expected: %s, Got: %s", expected, input.left.current)
-	}
-
-}
-
-func TestSearchPlaces(t *testing.T) {
-
-	input := Place{current: "AAA"}
-	input.AppendLeft("BBB", &input)
-
-	expected := input.SearchPlaces("BBB", &[]string{})
-
-	if input.left.current != expected.current {
-		t.Errorf("SearchPlaces function test failed. Expected: %s, Got: %s", expected.current, input.left.current)
-	}
-
-	input.left.AppendRight("CCC", &input)
-
-	expected = input.SearchPlaces("CCC", &[]string{})
-
-	if input.left.right.current != expected.current {
-		t.Errorf("SearchPlaces function test failed. Expected: %s, Got: %s", expected.current, input.left.current)
-	}
-
-}
-
 func TestCharFactory(t *testing.T) {
 
 	input := "AB12"
@@ -137,11 +92,15 @@ func TestSplitNodeLine(t *testing.T) {
 
 func TestSolvePuzzle(t *testing.T) {
 
-	content := []byte(`LLR
+	content := []byte(`RL
 
-AAA = (BBB, BBB)
-ZZZ = (ZZZ, ZZZ)
-BBB = (AAA, ZZZ)`)
+AAA = (BBB, CCC)
+BBB = (DDD, EEE)
+CCC = (ZZZ, GGG)
+DDD = (DDD, DDD)
+EEE = (EEE, EEE)
+GGG = (GGG, GGG)
+ZZZ = (ZZZ, ZZZ)`)
 
 	tmpfile, err := os.CreateTemp("", "example")
 	if err != nil {
@@ -160,7 +119,7 @@ BBB = (AAA, ZZZ)`)
 	}
 
 	result := SolvePuzzle(tmpfile.Name())
-	expected := 6
+	expected := 2
 
 	// Check if the result matches the expected value
 	if result != expected {
