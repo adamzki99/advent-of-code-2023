@@ -2,32 +2,43 @@
 
 # Check if the user provided an argument
 if [ $# -eq 0 ]; then
-  echo "Usage: $0 <day_number>"
+  echo "Usage: $0 <new_suffix>"
   exit 1
 fi
 
-# Get the day number from the user input
-day_number=$1
+# Get the new suffix from the user input
+new_suffix=$1
 
-# Create the directory
-dir_name="day_${day_number}"
-mkdir "$dir_name"
+# Source directory
+source_dir="day_template"
 
-# Create the Go source file
-go_source_file="${dir_name}/day${day_number}.go"
-touch "$go_source_file"
+# Destination directory
+dest_dir="day_${new_suffix}"
 
-# Create the Go test file
-go_test_file="${dir_name}/day${day_number}_test.go"
-touch "$go_test_file"
+# Check if the source directory exists
+if [ ! -d "$source_dir" ]; then
+  echo "Error: Source directory '$source_dir' not found."
+  exit 1
+fi
 
-# Create the puzzle input file
-puzzle_input_file="${dir_name}/puzzle_input.txt"
-touch "$puzzle_input_file"
+# Check if the destination directory already exists
+if [ -d "$dest_dir" ]; then
+  echo "Error: Destination directory '$dest_dir' already exists. Please choose a different suffix."
+  exit 1
+fi
 
-# Display success message
-echo "Directory and files created successfully:"
-echo " - Directory: $dir_name"
-echo " - Go source file: $go_source_file"
-echo " - Go test file: $go_test_file"
-echo " - Puzzle input file: $puzzle_input_file"
+# Create the destination directory
+mkdir "$dest_dir"
+
+# Copy files from source to destination and rename with the new suffix
+for file in "$source_dir"/*; do
+  if [ -f "$file" ]; then
+    filename=$(basename "$file")
+    new_filename="${filename//X/$new_suffix}"
+    cp "$file" "$dest_dir/$new_filename"
+  fi
+done
+
+echo "Directory and files copied successfully with the new suffix '$new_suffix':"
+echo " - Source directory: $source_dir"
+echo " - Destination directory: $dest_dir"
