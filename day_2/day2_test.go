@@ -3,6 +3,8 @@ package main
 import (
 	"os"
 	"testing"
+
+	"github.com/adamzki99/advent-of-code-2023/packages/testhelp"
 )
 
 func TestGetGameID(t *testing.T) {
@@ -52,26 +54,12 @@ func TestGetCubes(t *testing.T) {
 	}
 }
 
-func areSlicesEqual(slice1, slice2 []string) bool {
-	if len(slice1) != len(slice2) {
-		return false
-	}
-
-	for i, v := range slice1 {
-		if v != slice2[i] {
-			return false
-		}
-	}
-
-	return true
-}
-
 func TestGetDraws(t *testing.T) {
 
 	result := GetDraws("Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green")
 	expected := []string{"3 blue, 4 red", "1 red, 2 green, 6 blue", "2 green"}
 
-	if !areSlicesEqual(result, expected) {
+	if !testhelp.AreStringSlicesEqual(result, expected) {
 		t.Errorf("GetDraws function test failed. Slices are not equal")
 	}
 

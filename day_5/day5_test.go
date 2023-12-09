@@ -3,22 +3,9 @@ package main
 import (
 	"os"
 	"testing"
+
+	"github.com/adamzki99/advent-of-code-2023/packages/testhelp"
 )
-
-func areIntSlicesEqual(slice1, slice2 []int) bool {
-	if len(slice1) != len(slice2) {
-		return false
-	}
-
-	for i, v := range slice1 {
-
-		if v != slice2[i] {
-			return false
-		}
-
-	}
-	return true
-}
 
 func areMappingsEqual(m1, m2 Mapping) bool {
 
@@ -43,21 +30,21 @@ func TestStringOfNumbersToSliceOfNumbers(t *testing.T) {
 	result := StringOfNumbersToSliceOfNumbers("88 18 7", " ")
 	expected := []int{88, 18, 7}
 
-	if !areIntSlicesEqual(result, expected) {
+	if !testhelp.AreIntSlicesEqual(result, expected) {
 		t.Error("StringOfNumbersToSliceOfNumbers function test 1 failed.")
 	}
 
 	result = StringOfNumbersToSliceOfNumbers("0 69 1", " ")
 	expected = []int{0, 69, 1}
 
-	if !areIntSlicesEqual(result, expected) {
+	if !testhelp.AreIntSlicesEqual(result, expected) {
 		t.Error("StringOfNumbersToSliceOfNumbers function test 2 failed.")
 	}
 
 	result = StringOfNumbersToSliceOfNumbers("52 50 48", " ")
 	expected = []int{52, 50, 48}
 
-	if !areIntSlicesEqual(result, expected) {
+	if !testhelp.AreIntSlicesEqual(result, expected) {
 		t.Error("StringOfNumbersToSliceOfNumbers function test 3 failed.")
 	}
 

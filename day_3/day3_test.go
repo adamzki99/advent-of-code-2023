@@ -3,6 +3,8 @@ package main
 import (
 	"os"
 	"testing"
+
+	"github.com/adamzki99/advent-of-code-2023/packages/testhelp"
 )
 
 func areSymbolSlicesEqual(slice1, slice2 []Symbol) bool {
@@ -21,22 +23,7 @@ func areSymbolSlicesEqual(slice1, slice2 []Symbol) bool {
 	return true
 }
 
-func areIntSlicesEqual(slice1, slice2 []int) bool {
-	if len(slice1) != len(slice2) {
-		return false
-	}
-
-	for i, v := range slice1 {
-
-		if v != slice2[i] {
-			return false
-		}
-
-	}
-	return true
-}
-
-func areObjectSlicesEqual(slice1, slice2 []Serial) bool {
+func areSerialObjectSlicesEqual(slice1, slice2 []Serial) bool {
 	if len(slice1) != len(slice2) {
 		return false
 	}
@@ -143,7 +130,7 @@ func TestGetNumbersAndPositons(t *testing.T) {
 	expected := []Serial{{number: 467, didgitPositions: expectedDidgitPositions1}, {number: 114, didgitPositions: expectedDidgitPositions2}}
 
 	// Check if the result matches the expected value
-	if !areObjectSlicesEqual(result, expected) {
+	if !areSerialObjectSlicesEqual(result, expected) {
 		t.Errorf("GetNumbersAndPositons function test 1 failed.")
 	}
 
@@ -155,7 +142,7 @@ func TestGetNumbersAndPositons(t *testing.T) {
 	expected = []Serial{{number: 35, didgitPositions: expectedDidgitPositions1}, {number: 633, didgitPositions: expectedDidgitPositions2}}
 
 	// Check if the result matches the expected value
-	if !areObjectSlicesEqual(result, expected) {
+	if !areSerialObjectSlicesEqual(result, expected) {
 		t.Errorf("GetNumbersAndPositons function test 2 failed.")
 	}
 
@@ -395,7 +382,7 @@ func TestMakeGearRatios(t *testing.T) {
 	expected := []int{16345, 451490}
 
 	// Check if the result matches the expected value
-	if !areIntSlicesEqual(result, expected) {
+	if !testhelp.AreIntSlicesEqual(result, expected) {
 		t.Errorf("MakeGearRatios function test failed.")
 	}
 }

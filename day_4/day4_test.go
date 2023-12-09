@@ -3,22 +3,9 @@ package main
 import (
 	"os"
 	"testing"
+
+	"github.com/adamzki99/advent-of-code-2023/packages/testhelp"
 )
-
-func areIntSlicesEqual(slice1, slice2 []int) bool {
-	if len(slice1) != len(slice2) {
-		return false
-	}
-
-	for i, v := range slice1 {
-
-		if v != slice2[i] {
-			return false
-		}
-
-	}
-	return true
-}
 
 func areCardsEqual(card1, card2 Card) bool {
 
@@ -34,11 +21,11 @@ func areCardsEqual(card1, card2 Card) bool {
 		return false
 	}
 
-	if !areIntSlicesEqual(card1.cardNumbers, card2.cardNumbers) {
+	if !testhelp.AreIntSlicesEqual(card1.cardNumbers, card2.cardNumbers) {
 		return false
 	}
 
-	if !areIntSlicesEqual(card1.winningNumbers, card2.winningNumbers) {
+	if !testhelp.AreIntSlicesEqual(card1.winningNumbers, card2.winningNumbers) {
 		return false
 	}
 
@@ -67,7 +54,7 @@ func TestConvertSliceToInts(t *testing.T) {
 	result := ConvertSliceToInts([]string{"41", "48", "83", "86", "17"})
 	expected := []int{41, 48, 83, 86, 17}
 
-	if !areIntSlicesEqual(result, expected) {
+	if !testhelp.AreIntSlicesEqual(result, expected) {
 		t.Errorf("ConvertSliceToInts function test failed.")
 	}
 
@@ -103,21 +90,21 @@ func TestGetIntersection(t *testing.T) {
 	result := GetIntersection([]int{}, []int{})
 	expected := []int{}
 
-	if !areIntSlicesEqual(result, expected) {
+	if !testhelp.AreIntSlicesEqual(result, expected) {
 		t.Errorf("GetIntersection function test 1 failed.")
 	}
 
 	result = GetIntersection([]int{1}, []int{})
 	expected = []int{}
 
-	if !areIntSlicesEqual(result, expected) {
+	if !testhelp.AreIntSlicesEqual(result, expected) {
 		t.Errorf("GetIntersection function test 1 failed.")
 	}
 
 	result = GetIntersection([]int{1, 2, 9, 10}, []int{9, 2, 1, 9})
 	expected = []int{1, 2, 9}
 
-	if !areIntSlicesEqual(result, expected) {
+	if !testhelp.AreIntSlicesEqual(result, expected) {
 		t.Errorf("GetIntersection function test 1 failed.")
 	}
 

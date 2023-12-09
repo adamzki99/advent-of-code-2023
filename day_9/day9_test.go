@@ -3,36 +3,23 @@ package main
 import (
 	"os"
 	"testing"
+
+	"github.com/adamzki99/advent-of-code-2023/packages/testhelp"
 )
-
-func areIntSlicesEqual(slice1, slice2 []int) bool {
-	if len(slice1) != len(slice2) {
-		return false
-	}
-
-	for i, v := range slice1 {
-
-		if v != slice2[i] {
-			return false
-		}
-
-	}
-	return true
-}
 
 func TestProduceDifferences(t *testing.T) {
 
 	input := []int{21, 15, 10, 6, 3, 1}
 	result := ProduceDifferences(&input)
 	expected := []int{6, 5, 4, 3, 2}
-	if !areIntSlicesEqual(result, expected) {
+	if !testhelp.AreIntSlicesEqual(result, expected) {
 		t.Error("ProduceDifferences function test failed.")
 	}
 
 	input = []int{1, 1, 1, 1, 1}
 	result = ProduceDifferences(&input)
 	expected = []int{0, 0, 0, 0}
-	if !areIntSlicesEqual(result, expected) {
+	if !testhelp.AreIntSlicesEqual(result, expected) {
 		t.Error("ProduceDifferences function test failed.")
 	}
 
@@ -43,7 +30,7 @@ func TestStringLineToIntSlice(t *testing.T) {
 	input := "1   3   6  10  15  21"
 	result := StringLineToIntSlice(&input)
 	expected := []int{1, 3, 6, 10, 15, 21}
-	if !areIntSlicesEqual(result, expected) {
+	if !testhelp.AreIntSlicesEqual(result, expected) {
 		t.Error("StringLineToIntSlice function test failed.")
 	}
 
@@ -55,7 +42,7 @@ func TestCalculateNextValue(t *testing.T) {
 	l2 := []int{3, 3, 3, 3, 3, 3}
 	CalculateNextValue(&l1, &l2)
 	expected := []int{0, 3, 6, 9, 12, 15, 12}
-	if !areIntSlicesEqual(l1, expected) {
+	if !testhelp.AreIntSlicesEqual(l1, expected) {
 		t.Error("CalculateNextValue function test failed.")
 	}
 
@@ -63,7 +50,7 @@ func TestCalculateNextValue(t *testing.T) {
 	l2 = []int{0, 0, 0, 0}
 	CalculateNextValue(&l1, &l2)
 	expected = []int{3, 3, 3, 3, 3, 3}
-	if !areIntSlicesEqual(l1, expected) {
+	if !testhelp.AreIntSlicesEqual(l1, expected) {
 		t.Error("CalculateNextValue function test failed.")
 	}
 

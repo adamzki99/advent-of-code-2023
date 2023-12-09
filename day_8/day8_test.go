@@ -3,6 +3,8 @@ package main
 import (
 	"os"
 	"testing"
+
+	"github.com/adamzki99/advent-of-code-2023/packages/testhelp"
 )
 
 func TestCharFactory(t *testing.T) {
@@ -36,28 +38,13 @@ func TestCharFactory(t *testing.T) {
 
 }
 
-func areStringSlicesEqual(slice1, slice2 []string) bool {
-	if len(slice1) != len(slice2) {
-		return false
-	}
-
-	for i, v := range slice1 {
-
-		if v != slice2[i] {
-			return false
-		}
-
-	}
-	return true
-}
-
 func TestRebuildSliceWithIndexes(t *testing.T) {
 
 	input := []string{"a", "b", "c", "d"}
 	result := RebuildSliceWithIndexes(input, []int{1})
 	expected := []string{"b"}
 
-	if !areStringSlicesEqual(result, expected) {
+	if !testhelp.AreStringSlicesEqual(result, expected) {
 		t.Error("RebuildSliceWithIndexes function test failed.")
 	}
 
@@ -65,7 +52,7 @@ func TestRebuildSliceWithIndexes(t *testing.T) {
 	result = RebuildSliceWithIndexes(input, []int{1, 3})
 	expected = []string{"b", "d"}
 
-	if !areStringSlicesEqual(result, expected) {
+	if !testhelp.AreStringSlicesEqual(result, expected) {
 		t.Error("RebuildSliceWithIndexes function test failed.")
 	}
 
