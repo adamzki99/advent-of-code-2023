@@ -110,7 +110,7 @@ func TestSolvePuzzle(t *testing.T) {
 	}
 
 	result := SolvePuzzle(tmpfile.Name())
-	expected := 114
+	expected := 2
 
 	// Check if the result matches the expected value
 	if result != expected {

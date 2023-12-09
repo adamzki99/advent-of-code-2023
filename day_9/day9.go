@@ -15,7 +15,9 @@ func ProduceDifferences(historyReading *[]int) []int {
 
 	for i := 0; i < len(*historyReading)-1; i++ {
 
-		rS = append(rS, (*historyReading)[i+1]-(*historyReading)[i])
+		aV := float64((*historyReading)[i] - (*historyReading)[i+1])
+
+		rS = append(rS, int(aV))
 	}
 
 	return rS
@@ -41,7 +43,9 @@ func StringLineToIntSlice(sS *string) []int {
 
 func CalculateNextValue(l1, l2 *[]int) {
 
-	(*l1) = append((*l1), (*l2)[len((*l2))-1]+(*l1)[len((*l1))-1])
+	aV := (*l1)[len((*l1))-1] - (*l2)[len((*l2))-1]
+
+	(*l1) = append((*l1), int(aV))
 
 }
 
@@ -75,10 +79,14 @@ func SolvePuzzle(fileName string) int {
 		differenceSlice := StringLineToIntSlice(&hR)
 
 		iSlice := [][]int{}
+
+		slices.Reverse(differenceSlice)
 		iSlice = append(iSlice, differenceSlice)
 
 		for {
-			differenceSlice = ProduceDifferences(&differenceSlice)
+
+			differenceSlice = ProduceDifferences(&iSlice[len(iSlice)-1])
+
 			iSlice = append(iSlice, differenceSlice)
 
 			if AllElementsAreZero(&differenceSlice) {
@@ -90,7 +98,6 @@ func SolvePuzzle(fileName string) int {
 		for i := 0; i < len(iSlice)-1; i++ {
 			CalculateNextValue(&(iSlice[i+1]), &iSlice[i])
 		}
-
 		slices.Reverse(iSlice)
 		puzzleResult = puzzleResult + iSlice[0][len(iSlice[0])-1]
 
