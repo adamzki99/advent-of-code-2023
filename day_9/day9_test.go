@@ -22,9 +22,9 @@ func areIntSlicesEqual(slice1, slice2 []int) bool {
 
 func TestProduceDifferences(t *testing.T) {
 
-	input := []int{1, 3, 6, 10, 15, 21}
+	input := []int{21, 15, 10, 6, 3, 1}
 	result := ProduceDifferences(&input)
-	expected := []int{2, 3, 4, 5, 6}
+	expected := []int{6, 5, 4, 3, 2}
 	if !areIntSlicesEqual(result, expected) {
 		t.Error("ProduceDifferences function test failed.")
 	}
@@ -54,7 +54,7 @@ func TestCalculateNextValue(t *testing.T) {
 	l1 := []int{0, 3, 6, 9, 12, 15}
 	l2 := []int{3, 3, 3, 3, 3, 3}
 	CalculateNextValue(&l1, &l2)
-	expected := []int{0, 3, 6, 9, 12, 15, 18}
+	expected := []int{0, 3, 6, 9, 12, 15, 12}
 	if !areIntSlicesEqual(l1, expected) {
 		t.Error("CalculateNextValue function test failed.")
 	}
