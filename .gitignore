@@ -21,3 +21,8 @@
 go.work
 
 .vscode
+
+# Ignore any trash that might be in a day repo.
+
+/day*/*
+!/day*/*.*
