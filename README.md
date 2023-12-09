@@ -25,11 +25,21 @@ In short, the knowledge sources for this edition will be:
 
 ## Lessons learned
 
+### Day 9
+
+```bash
+$ go test -cover
+
+PASS
+coverage: 92.7% of statements
+ok      github.com/adamzki99/advent-of-code-2023/day_9  0.003s
+```
+
 ### Day 8
 A bit lower test presentage today. I need to find a good way to test mulithreaded code.
 
 ```bash
-go test -cover
+$ go test -cover
 
 PASS
 coverage: 85.7% of statements
