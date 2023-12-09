@@ -22,7 +22,7 @@ go.work
 
 .vscode
 
-# Ignore any trash that might be in a day repo.
+# Ignore any trash-files that might be in a day dir.
 
 /day*/*
 !/day*/*.*
