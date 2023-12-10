@@ -5,7 +5,6 @@ import (
 	"math"
 	"slices"
 	"strings"
-	"sync"
 
 	"github.com/adamzki99/advent-of-code-2023/packages/file"
 )
@@ -81,23 +80,23 @@ func NextPipeIndex(currentPipe string, currentIndex, stride int, m *Momentum) in
 
 }
 
-func StepFactory(s []string, start, stride int, m *Momentum) func() string {
+func StepFactory(s []string, start, stride int, m *Momentum) func() (string, int) {
 	index := start
-	return func() string {
+	return func() (string, int) {
 
 		index = NextPipeIndex(s[index], index, stride, m)
 
 		if index == -1 {
-			return ""
+			return "", -1
 		}
 
 		currentChar := s[index]
 
 		if currentChar == "." {
-			return ""
+			return "", -1
 		}
 
-		return currentChar
+		return currentChar, index
 	}
 }
 
@@ -117,43 +116,7 @@ func createPotentialMomentums() []Momentum {
 	return potentialStartingMomentums
 }
 
-func Walker(puzzleMap *[]string, startIndex, stride, id int, m *Momentum, wg *sync.WaitGroup, resultChan chan int) {
-
-	defer wg.Done()
-
-	stepFactory := StepFactory(*puzzleMap, startIndex, stride, m)
-
-	loopLength := int16(0)
-
-	for {
-
-		loopLength++
-
-		nextPipe := stepFactory()
-
-		if nextPipe == "" || nextPipe == "." { //Out of bounds, not a valid loop
-			loopLength = -1
-			break
-		}
-
-		if loopLength == math.MaxInt16 {
-			fmt.Printf("WARNING: Walker %d will hit overflow when counting loop lenght\n", id)
-			loopLength = -1
-			break
-		}
-
-		if nextPipe == "S" {
-			loopLength++
-			break
-		}
-
-	}
-	resultChan <- int(loopLength)
-}
-
 func SolvePuzzle(fileName string) int {
-
-	var wg sync.WaitGroup
 
 	fileContent, err := file.ReadFileContents(fileName)
 
@@ -184,45 +147,58 @@ func SolvePuzzle(fileName string) int {
 	potentialStartingPositions := []string{"|", "-"}
 	potentialStartingMomentums := createPotentialMomentums()
 
-	// Create a thread for each starting environment
-	resultChan := make(chan int, len(potentialStartingPositions)*len(potentialStartingMomentums))
-	workerID := -1
+	longestLoop := []int{}
 	for _, pSS := range potentialStartingPositions {
 
 		for _, pSM := range potentialStartingMomentums {
 
-			workerID++
+			startIndex := NextPipeIndex(pSS, startIndex, stride, &pSM)
 
-			individualMomentum := Momentum{horisontalDir: pSM.horisontalDir, verticalDir: pSM.verticalDir}
-
-			individualStartIndex := NextPipeIndex(pSS, startIndex, stride, &individualMomentum)
-
-			if individualStartIndex == -1 || puzzleMap[individualStartIndex] == "." { // Invalid start
+			if startIndex == -1 || puzzleMap[startIndex] == "." { // Invalid start
 				continue
 			}
 
-			wg.Add(1)
-			go Walker(&puzzleMap, individualStartIndex, stride, workerID, &individualMomentum, &wg, resultChan)
+			stepFactory := StepFactory(puzzleMap, startIndex, stride, &pSM)
+
+			loopLength := int16(0)
+
+			currentPath := []int{startIndex}
+
+			for {
+
+				loopLength++
+
+				nextPipe, pipeLocation := stepFactory()
+
+				currentPath = append(currentPath, pipeLocation)
+
+				if nextPipe == "" || nextPipe == "." { //Out of bounds, not a valid loop
+					loopLength = -1
+					break
+				}
+
+				if loopLength == math.MaxInt16 { // Probably ended up in a endless loop
+					loopLength = -1
+					break
+				}
+
+				if nextPipe == "S" {
+					loopLength++
+					break
+				}
+
+			}
+
+			if len(longestLoop) < len(currentPath) && loopLength != -1 {
+				longestLoop = currentPath
+			}
 
 		}
 
 	}
-	go func() {
-		wg.Wait()
-		close(resultChan)
-	}()
-
-	// Now get the longest loop
-	results := []int{}
-	for r := range resultChan {
-
-		results = append(results, r)
-	}
-
-	slices.Sort(results)
 
 	// Furthest point away is half of the loop lenght
-	return results[len(results)-1] / 2
+	return len(longestLoop) / 2
 
 }
 

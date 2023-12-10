@@ -20,29 +20,33 @@ func TestStepFactory(t *testing.T) {
 	m := Momentum{horisontalDir: 0, verticalDir: -1}
 	input := strings.Split(".F-7.", "")
 	stepFactory := StepFactory(input, 1, 5, &m)
-	result := stepFactory()
-	expected := "-"
-	if result != expected {
-		t.Errorf("StepFactory function test failed. Expected: %s, Got: %s", expected, result)
+	r1, r2 := stepFactory()
+	e1 := "-"
+	e2 := 2
+	if r1 != e1 || r2 != e2 {
+		t.Errorf("StepFactory function test failed.")
 	}
-	result = stepFactory()
-	expected = "7"
-	if result != expected {
-		t.Errorf("StepFactory function test failed. Expected: %s, Got: %s", expected, result)
+	r1, r2 = stepFactory()
+	e1 = "7"
+	e2 = 3
+	if r1 != e1 || r2 != e2 {
+		t.Errorf("StepFactory function test failed.")
 	}
 
 	m = Momentum{horisontalDir: 1, verticalDir: 0}
 	input = strings.Split(".F-7..|.|.", "")
 	stepFactory = StepFactory(input, 2, 5, &m)
-	result = stepFactory()
-	expected = "7"
-	if result != expected {
-		t.Errorf("StepFactory function test failed. Expected: %s, Got: %s", expected, result)
+	r1, r2 = stepFactory()
+	e1 = "7"
+	e2 = 3
+	if r1 != e1 || r2 != e2 {
+		t.Errorf("StepFactory function test failed.")
 	}
-	result = stepFactory()
-	expected = "|"
-	if result != expected {
-		t.Errorf("StepFactory function test failed. Expected: %s, Got: %s", expected, result)
+	r1, r2 = stepFactory()
+	e1 = "|"
+	e2 = 8
+	if r1 != e1 || r2 != e2 {
+		t.Errorf("StepFactory function test failed.")
 	}
 
 }
