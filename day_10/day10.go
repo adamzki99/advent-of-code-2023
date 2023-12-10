@@ -86,7 +86,7 @@ func StepFactory(s []string, start, stride int, m *Momentum) func() (string, int
 
 		index = NextPipeIndex(s[index], index, stride, m)
 
-		if index == -1 {
+		if index < 0 {
 			return "", -1
 		}
 
@@ -100,20 +100,68 @@ func StepFactory(s []string, start, stride int, m *Momentum) func() (string, int
 	}
 }
 
+// Only allowed start in a positive direction
 func createPotentialMomentums() []Momentum {
-
-	values := []int{1, -1}
 
 	potentialStartingMomentums := []Momentum{}
 
-	for _, v := range values {
-		potentialStartingMomentums = append(potentialStartingMomentums, Momentum{horisontalDir: 0, verticalDir: v})
+	potentialStartingMomentums = append(potentialStartingMomentums, Momentum{horisontalDir: 0, verticalDir: 1})
+	potentialStartingMomentums = append(potentialStartingMomentums, Momentum{horisontalDir: 1, verticalDir: 0})
 
-		potentialStartingMomentums = append(potentialStartingMomentums, Momentum{horisontalDir: v, verticalDir: 0})
+	return potentialStartingMomentums
+}
+
+func DoesPointTouchAnyPointInSet(p, stride int, s []int) bool {
+
+	//Maybe it already is in the set
+	if slices.Contains(s, p) {
+		return true
+	}
+
+	reachingPoints := []int{p - stride, p + 1, p + stride, p - 1}
+
+	for _, rP := range reachingPoints {
+
+		if slices.Contains(s, rP) {
+			return true
+		}
 
 	}
 
-	return potentialStartingMomentums
+	return false
+
+}
+
+// Returns the number of loop crossings in a given directions
+func FireBeam(longestLoop *[]int, groundTile, stride, puzzleMapLen int, m Momentum) int {
+
+	//       -----------------
+	// 		 |  o----------->|
+	//       |               |
+	//       |               |
+	//  o--->|-------------->|
+	//       |               |
+	//       -----------------
+	//              o-------------
+	//
+	// If a line from a point hits a uneven amount of loop-lines, it is in the loop.
+	// If not, it is outside the loop
+	//
+
+	nextGroundTile := groundTile + m.horisontalDir + (m.verticalDir * stride)
+
+	if -1 < nextGroundTile && nextGroundTile%stride != 0 && nextGroundTile < puzzleMapLen {
+
+		if slices.Contains(*longestLoop, nextGroundTile) {
+			return 1 + FireBeam(longestLoop, nextGroundTile, stride, puzzleMapLen, m)
+		} else {
+			return FireBeam(longestLoop, nextGroundTile, stride, puzzleMapLen, m)
+		}
+
+	}
+
+	return 0
+
 }
 
 func SolvePuzzle(fileName string) int {
@@ -197,8 +245,50 @@ func SolvePuzzle(fileName string) int {
 
 	}
 
-	// Furthest point away is half of the loop lenght
-	return len(longestLoop) / 2
+	// Get all points not in main loop
+	groundTiles := []int{}
+	for i := range puzzleMap {
+
+		if !slices.Contains(longestLoop, i) {
+			groundTiles = append(groundTiles, i)
+		}
+
+	}
+
+	pointsEnclosedByLoop := 0
+
+	// Determine if the line is inside or outside the loop
+	for _, groundTile := range groundTiles {
+
+		hits := FireBeam(&longestLoop, groundTile, stride, len(puzzleMap), Momentum{horisontalDir: 1, verticalDir: 0})
+
+		if hits%2 == 0 {
+			continue
+		}
+
+		hits = FireBeam(&longestLoop, groundTile, stride, len(puzzleMap), Momentum{horisontalDir: -1, verticalDir: 0})
+
+		if hits%2 == 0 {
+			continue
+		}
+
+		hits = FireBeam(&longestLoop, groundTile, stride, len(puzzleMap), Momentum{horisontalDir: 0, verticalDir: 1})
+
+		if hits%2 == 0 {
+			continue
+		}
+
+		hits = FireBeam(&longestLoop, groundTile, stride, len(puzzleMap), Momentum{horisontalDir: 0, verticalDir: -1})
+
+		if hits%2 == 0 {
+			continue
+		}
+
+		pointsEnclosedByLoop++
+
+	}
+
+	return pointsEnclosedByLoop
 
 }
 

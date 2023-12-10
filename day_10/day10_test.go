@@ -51,13 +51,39 @@ func TestStepFactory(t *testing.T) {
 
 }
 
+func TestDoesPointTouchAnyPointInSet(t *testing.T) {
+
+	result := DoesPointTouchAnyPointInSet(1, 5, []int{2, 3, 4})
+	expected := true
+	if result != expected {
+		t.Errorf("DoesPointTouchAnyPointInSet function test failed. Expected: %t, Got: %t", expected, result)
+	}
+
+	result = DoesPointTouchAnyPointInSet(1, 5, []int{2, 6, 4})
+	expected = true
+	if result != expected {
+		t.Errorf("DoesPointTouchAnyPointInSet function test failed. Expected: %t, Got: %t", expected, result)
+	}
+
+	result = DoesPointTouchAnyPointInSet(2, 5, []int{2, 6, 4})
+	expected = false
+	if result != expected {
+		t.Errorf("DoesPointTouchAnyPointInSet function test failed. Expected: %t, Got: %t", expected, result)
+	}
+
+}
+
 func TestSolvePuzzle(t *testing.T) {
 
-	content := []byte(`..F7.
-.FJ|.
-SJ.L7
-|F--J
-LJ...`)
+	content := []byte(`...........
+.S-------7.
+.|F-----7|.
+.||.....||.
+.||.....||.
+.|L-7.F-J|.
+.|..|.|..|.
+.L--J.L--J.
+...........`)
 
 	tmpfile, err := os.CreateTemp("", "example")
 	if err != nil {
@@ -76,7 +102,7 @@ LJ...`)
 	}
 
 	result := SolvePuzzle(tmpfile.Name())
-	expected := 8
+	expected := 4
 
 	// Check if the result matches the expected value
 	if result != expected {
