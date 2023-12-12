@@ -43,7 +43,7 @@ func GetPattern(record []string) []int {
 
 }
 
-func ExtractPattern(line string) []int {
+func ExtractPattern(line string, copies int) []int {
 
 	patternSlice := []int{}
 
@@ -56,6 +56,15 @@ func ExtractPattern(line string) []int {
 		if e == nil {
 			patternSlice = append(patternSlice, v)
 		}
+
+	}
+
+	ogPatternSlice := []int{}
+	ogPatternSlice = append(ogPatternSlice, patternSlice...)
+
+	for i := 0; i < copies; i++ {
+
+		patternSlice = append(patternSlice, ogPatternSlice...)
 
 	}
 
@@ -82,6 +91,13 @@ func PatternMatch(record []string, pattern []int) bool {
 
 }
 
+func MoreGroupsLeadsToMatch(record []string, pattern []int) bool {
+
+	patternIdentified := GetPattern(record)
+
+	return len(patternIdentified) <= len(pattern)
+}
+
 func GenerateArrangements(a *Arrangement, pattern []int) {
 
 	if !slices.Contains(a.local, "?") {
@@ -92,6 +108,10 @@ func GenerateArrangements(a *Arrangement, pattern []int) {
 			a.matchesUnder = 0
 		}
 
+		return
+	}
+
+	if !MoreGroupsLeadsToMatch(a.local, pattern) {
 		return
 	}
 
@@ -129,14 +149,22 @@ func SolvePuzzle(fileName string) int {
 
 	for _, line := range fileLines {
 
-		pattern := ExtractPattern(line)
+		patternUnfolded := ExtractPattern(line, 4)
 
-		lA := strings.Split(line, " ")[0]
-		lineArrangement := strings.Split(lA, "")
+		record := strings.Split(line, " ")[0]
+		recordUnfolded := record
+
+		for i := 0; i < 4; i++ {
+
+			recordUnfolded = recordUnfolded + "?" + record
+
+		}
+
+		lineArrangement := strings.Split(recordUnfolded, "")
 
 		a := &Arrangement{local: lineArrangement}
 
-		GenerateArrangements(a, pattern)
+		GenerateArrangements(a, patternUnfolded)
 
 		puzzleAwnser = puzzleAwnser + a.matchesUnder
 
