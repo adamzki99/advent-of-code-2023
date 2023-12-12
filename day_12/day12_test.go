@@ -34,6 +34,13 @@ func TestExtractPattern(t *testing.T) {
 		t.Errorf("ExtractPattern function test failed.")
 	}
 
+	result = ExtractPattern("??#??#???#????????? 10,2,1,1")
+	expected = []int{10,2,1,1}
+
+	if !testhelp.AreIntSlicesEqual(result, expected) {
+		t.Errorf("ExtractPattern function test failed.")
+	}
+
 }
 
 func TestPatternMatch(t *testing.T) {
@@ -63,6 +70,57 @@ func TestGenerateArrangements(t *testing.T) {
 		!testhelp.AreStringSlicesEqual(input.operational.local, expected.operational.local) ||
 		input.matchesUnder != expected.matchesUnder {
 		t.Errorf("GenerateArrangements function test failed.")
+	}
+
+	//
+
+	input = &Arrangement{local: []string{"?", "?", "?", ".", "#", "#", "#"}}
+	GenerateArrangements(input, []int{1, 1, 3})
+	expectedMatches := 1
+	if input.matchesUnder != expectedMatches {
+		t.Errorf("GenerateArrangements function test failed. Expected: %d, Got: %d", expectedMatches, input.matchesUnder)
+	}
+
+	input = &Arrangement{local: []string{".", "?", "?", ".", ".", "?", "?", ".", ".", ".", "?", "#", "#", "."}}
+	GenerateArrangements(input, []int{1, 1, 3})
+	expectedMatches = 4
+	if input.matchesUnder != expectedMatches {
+		t.Errorf("GenerateArrangements function test failed. Expected: %d, Got: %d", expectedMatches, input.matchesUnder)
+	}
+
+	input = &Arrangement{local: []string{"?", "#", "?", "#", "?", "#", "?", "#", "?", "#", "?", "#", "?", "#", "?"}}
+	GenerateArrangements(input, []int{1, 3, 1, 6})
+	expectedMatches = 1
+	if input.matchesUnder != expectedMatches {
+		t.Errorf("GenerateArrangements function test failed. Expected: %d, Got: %d", expectedMatches, input.matchesUnder)
+	}
+
+	input = &Arrangement{local: []string{"?", "?", "?", "?", ".", "#", ".", ".", ".", "#", ".", ".", "."}}
+	GenerateArrangements(input, []int{4, 1, 1})
+	expectedMatches = 1
+	if input.matchesUnder != expectedMatches {
+		t.Errorf("GenerateArrangements function test failed. Expected: %d, Got: %d", expectedMatches, input.matchesUnder)
+	}
+
+	input = &Arrangement{local: []string{"?", "?", "?", "?", ".", "#", "#", "#", "#", "#", "#", ".", ".", "#", "#", "#", "#", "#", "."}}
+	GenerateArrangements(input, []int{1, 6, 5})
+	expectedMatches = 4
+	if input.matchesUnder != expectedMatches {
+		t.Errorf("GenerateArrangements function test failed. Expected: %d, Got: %d", expectedMatches, input.matchesUnder)
+	}
+
+	input = &Arrangement{local: []string{"?", "#", "#", "#", "?", "?", "?", "?", "?", "?", "?", "?"}}
+	GenerateArrangements(input, []int{3, 2, 1})
+	expectedMatches = 10
+	if input.matchesUnder != expectedMatches {
+		t.Errorf("GenerateArrangements function test failed. Expected: %d, Got: %d", expectedMatches, input.matchesUnder)
+	}
+
+	input = &Arrangement{local: []string{"?", "?", "#", "?", "?", "#", "?", "?", "?", "#", "?", "?", "?", "?", "?", "?", "?", "?", "?"}}
+	GenerateArrangements(input, []int{10, 2, 1, 1})
+	expectedMatches = 15
+	if input.matchesUnder != expectedMatches {
+		t.Errorf("GenerateArrangements function test failed. Expected: %d, Got: %d", expectedMatches, input.matchesUnder)
 	}
 
 }

@@ -49,7 +49,7 @@ func ExtractPattern(line string) []int {
 
 	pattern := strings.Split(line, " ")[1]
 
-	for _, c := range strings.Split(pattern, "") {
+	for _, c := range strings.Split(pattern, ",") {
 
 		v, e := strconv.Atoi(c)
 
