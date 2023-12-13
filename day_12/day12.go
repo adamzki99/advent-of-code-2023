@@ -5,15 +5,13 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/adamzki99/advent-of-code-2023/packages/file"
 )
 
 type Arrangement struct {
-	local        []string
-	matchesUnder int
-	operational  *Arrangement
-	damaged      *Arrangement
+	local []string
 }
 
 func GetPattern(record []string) []int {
@@ -98,56 +96,43 @@ func MoreGroupsLeadsToMatch(record []string, pattern []int) bool {
 	return len(patternIdentified) <= len(pattern)
 }
 
-func GenerateArrangements(a *Arrangement, pattern []int) {
+func GenerateArrangements(a *Arrangement, pattern []int) int {
 
 	if !slices.Contains(a.local, "?") {
 
 		if PatternMatch(a.local, pattern) {
-			a.matchesUnder = 1
+			return 1
 		} else {
-			a.matchesUnder = 0
+			return 0
 		}
 
-		return
 	}
 
 	if !MoreGroupsLeadsToMatch(a.local, pattern) {
-		return
+		return 0
 	}
 
 	indexOfChange := slices.Index(a.local, "?")
 
 	a.local[indexOfChange] = "#"
-	localChange := []string{}
-	localChange = append(localChange, a.local...)
-	a.damaged = &Arrangement{local: localChange}
-	GenerateArrangements(a.damaged, pattern)
+	localChangeDef := []string{}
+	localChangeDef = append(localChangeDef, a.local...)
 
 	a.local[indexOfChange] = "."
-	localChange = []string{}
-	localChange = append(localChange, a.local...)
-	a.operational = &Arrangement{local: localChange}
-	GenerateArrangements(a.operational, pattern)
+	localChangeOp := []string{}
+	localChangeOp = append(localChangeOp, a.local...)
 
-	// undo change
-	a.local[indexOfChange] = "?"
-	a.matchesUnder = a.damaged.matchesUnder + a.operational.matchesUnder
+	return GenerateArrangements(&Arrangement{local: localChangeDef}, pattern) + GenerateArrangements(&Arrangement{local: localChangeOp}, pattern)
+
 }
 
-func SolvePuzzle(fileName string) int {
+func arrangementWorker(lines []string, id int, resultChan chan int, wg *sync.WaitGroup) {
 
-	fileContent, err := file.ReadFileContents(fileName)
+	defer wg.Done()
 
-	if err != nil {
-		fmt.Println(err)
-		return -1
-	}
+	workerSum := 0
 
-	fileLines := strings.Split(fileContent, "\n")
-
-	puzzleAwnser := 0
-
-	for _, line := range fileLines {
+	for _, line := range lines {
 
 		patternUnfolded := ExtractPattern(line, 4)
 
@@ -162,12 +147,54 @@ func SolvePuzzle(fileName string) int {
 
 		lineArrangement := strings.Split(recordUnfolded, "")
 
-		a := &Arrangement{local: lineArrangement}
+		workerSum += GenerateArrangements(&Arrangement{local: lineArrangement}, patternUnfolded)
 
-		GenerateArrangements(a, patternUnfolded)
+	}
 
-		puzzleAwnser = puzzleAwnser + a.matchesUnder
+	fmt.Printf("Woker %d complete\n", id)
 
+	resultChan <- workerSum
+
+}
+
+func SolvePuzzle(fileName string) int {
+
+	fileContent, err := file.ReadFileContents(fileName)
+
+	if err != nil {
+		fmt.Println(err)
+		return -1
+	}
+
+	fileLines := strings.Split(fileContent, "\n")
+
+	var wg sync.WaitGroup
+
+	resultChan := make(chan int, 4)
+
+	workerLines := [][]string{}
+
+	workerLines = append(workerLines, fileLines[:len(fileLines)/4])
+	workerLines = append(workerLines, fileLines[len(fileLines)/4:len(fileLines)/2])
+	workerLines = append(workerLines, fileLines[len(fileLines)/2:len(fileLines)/4*3])
+	workerLines = append(workerLines, fileLines[len(fileLines)/4*3:])
+
+	for i := 0; i < 4; i++ {
+
+		wg.Add(1)
+
+		go arrangementWorker(workerLines[i], i, resultChan, &wg)
+
+	}
+
+	go func() {
+		wg.Wait()
+		close(resultChan)
+	}()
+
+	puzzleAwnser := 0
+	for partialSum := range resultChan {
+		puzzleAwnser += partialSum
 	}
 
 	return puzzleAwnser
